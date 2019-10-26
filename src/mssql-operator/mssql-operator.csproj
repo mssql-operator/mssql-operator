@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="KubernetesClient" Version="1.6.3" />
+    <PackageReference Include="Microsoft.SqlServer.SqlManagementObjects" Version="150.18178.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OperatorSharp\OperatorSharp.csproj" />
+  </ItemGroup>
+
+</Project>
