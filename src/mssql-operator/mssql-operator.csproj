@@ -8,6 +8,7 @@
   <ItemGroup>
     <PackageReference Include="KubernetesClient" Version="1.6.3" />
     <PackageReference Include="Microsoft.SqlServer.SqlManagementObjects" Version="150.18178.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>

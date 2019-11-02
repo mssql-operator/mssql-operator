@@ -7,9 +7,9 @@ namespace OperatorSharp.CustomResources.Metadata
     {
         public ApiVersionAttribute(string apiVersion)
         {
-            ApiVersion = apiVersion;
+            ApiVersion = new ApiVersion(apiVersion);
         }
 
-        public string ApiVersion { get; }
+        public ApiVersion ApiVersion { get; }
     }
 }

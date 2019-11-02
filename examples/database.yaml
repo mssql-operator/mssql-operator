@@ -4,9 +4,6 @@ metadata:
   name: techpyramid-dev
   namespace: "default"
 spec:
-  databaseSelector:
-    matchLabels:
-      database-server: dev
   serviceUrl: techpyramid-dev-sql.default.svc.cluster.local:1433
   serviceSelector:
     matchLabels:
@@ -25,6 +22,9 @@ metadata:
   labels:
     database-server: dev
 spec:
+  databaseSelector:
+    matchLabels:
+      database-server: dev
   datafiles:
     primary:
       - name: "Authentication"
@@ -41,6 +41,9 @@ metadata:
   labels:
     database-server: dev
 spec:
+  databaseSelector:
+    matchLabels:
+      database-server: dev
   backupfiles:
     - path: /backups/Accounts.bak
   datafiles:

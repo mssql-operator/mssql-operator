@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using k8s.Models;
 using Microsoft.SqlServer.Management.Smo;
 using OperatorSharp.CustomResources;
 using OperatorSharp.CustomResources.Metadata;
@@ -17,6 +18,7 @@ namespace MSSqlOperator
 
     public class DatabaseSpec 
     {
+        public V1LabelSelector DatabaseSelector { get; set; }
         public string Collation { get; set; }
         public List<DatabaseFile> LogFiles { get; set; }
         public List<DatabaseFile> BackupFiles { get; set; }
