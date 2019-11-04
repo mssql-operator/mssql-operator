@@ -15,7 +15,7 @@ namespace MSSqlOperator.Operators
 {
     public class DatabaseOperator : Operator<DatabaseResource>
     {
-        public DatabaseOperator(Kubernetes client, ILogger<Operator<DatabaseResource>> logger, int timeoutSeconds) : base(client, logger, timeoutSeconds)
+        public DatabaseOperator(Kubernetes client, ILogger<Operator<DatabaseResource>> logger) : base(client, logger)
         {
         }
 
@@ -27,37 +27,44 @@ namespace MSSqlOperator.Operators
         public override void HandleItem(WatchEventType eventType, DatabaseResource item)
         {
             Logger.LogDebug("Recieved new Database object (v {ResourceVersion})", item.Metadata.ResourceVersion);
-            DatabaseServer server = GetServerResources(item.Metadata.NamespaceProperty, item.Spec.DatabaseSelector);
-            var builder = new SqlConnectionStringBuilder
-            {
-                DataSource = server.ServiceUrl,
-                UserID = server.AdminUserName,
-                Password = server.AdminPasswordSecret.Value,
-                InitialCatalog = "master"
-            };
-
-            var serverConn = new Server(new ServerConnection(new SqlConnection(builder.ToString())));
-            
-            if (eventType == WatchEventType.Added) 
-            {
-                if (item.Spec.BackupFiles?.Any() ?? false) 
+            return;
+            try {
+                DatabaseServer server = GetServerResources(item.Metadata.NamespaceProperty, item.Spec.DatabaseSelector);
+                var builder = new SqlConnectionStringBuilder
                 {
-                    RestoreDatabase(serverConn, item);
-                }
-                else
-                {
-                    CreateDatabase(serverConn, item);
-                }
+                    DataSource = server.ServiceUrl,
+                    UserID = server.AdminUserName,
+                    Password = server.AdminPasswordSecret.Value,
+                    InitialCatalog = "master"
+                };
 
-                Logger.LogInformation("Created database {database}", item.Metadata.Name);
+                var serverConn = new Server(new ServerConnection(new SqlConnection(builder.ToString())));
+                
+                if (eventType == WatchEventType.Added) 
+                {
+                    if (item.Spec.BackupFiles?.Any() ?? false) 
+                    {
+                        RestoreDatabase(serverConn, item);
+                    }
+                    else
+                    {
+                        CreateDatabase(serverConn, item);
+                    }
+
+                    Logger.LogInformation("Created database {database}", item.Metadata.Name);
+                }
+                else if (eventType == WatchEventType.Deleted) 
+                {
+                    if (item.Spec.GCStrategy == GarbageCollectionStrategy.Delete) {
+                        Logger.LogInformation("Deleting database {Database} from server {server}", item.Metadata.Name, serverConn.Name);
+                        serverConn.Databases[item.Metadata.Name].Drop();
+                        Logger.LogInformation("Database {database} deleted", item.Metadata.Name);
+                    }
+                }
             }
-            else if (eventType == WatchEventType.Deleted) 
+            catch (Exception ex)
             {
-                if (item.Spec.GCStrategy == GarbageCollectionStrategy.Delete) {
-                    Logger.LogInformation("Deleting database {Database} from server {server}", item.Metadata.Name, serverConn.Name);
-                    serverConn.Databases[item.Metadata.Name].Drop();
-                    Logger.LogInformation("Database {database} deleted", item.Metadata.Name);
-                }
+                Logger.LogError(ex, "An error occurred during message processing");
             }
         }
 

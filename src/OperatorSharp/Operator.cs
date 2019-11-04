@@ -9,42 +9,50 @@ using Microsoft.Extensions.Logging;
 
 namespace OperatorSharp
 {
-    public abstract class Operator<TCustomResource> where TCustomResource: CustomResources.CustomResource
+    public abstract class Operator 
     {
-        private readonly int timeoutSeconds;
+        public abstract Task WatchAsync(CancellationToken token, string watchedNamespace);
+    }
 
-        public Operator(Kubernetes client, ILogger<Operator<TCustomResource>> logger, int timeoutSeconds = 30)
+    public abstract class Operator<TCustomResource> : Operator
+        where TCustomResource: CustomResources.CustomResource
+    {
+
+        public Operator(Kubernetes client, ILogger<Operator<TCustomResource>> logger)
         {
             Client = client;
             Logger = logger;
-            this.timeoutSeconds = timeoutSeconds;
         }
 
         protected Kubernetes Client { get; private set; }
         public ILogger<Operator<TCustomResource>> Logger { get; }
 
-        public ApiVersion ApiVersion => GetAttribute<ApiVersionAttribute>().ApiVersion;
+        public ApiVersion ApiVersion => GetAttribute<TCustomResource, ApiVersionAttribute>().ApiVersion;
 
         public abstract void HandleItem(WatchEventType eventType, TCustomResource item);
 
         public abstract void HandleException(Exception ex);
 
-        public async Task WatchAsync(CancellationToken token, string watchedNamespace)
+        public override async Task WatchAsync(CancellationToken token, string watchedNamespace)
         {
-            string plural = GetAttribute<PluralNameAttribute>().PluralName;
-            
+            Logger.LogDebug("Starting operator for {operator} operator", GetType().Name);
+            string plural = GetAttribute<TCustomResource, PluralNameAttribute>().PluralName;
+
+            Logger.LogDebug("Initiating watch for {resource}", plural);
             var result = await Client.ListNamespacedCustomObjectWithHttpMessagesAsync(
-                ApiVersion.Group, ApiVersion.Version, watchedNamespace,  plural, watch: true, timeoutSeconds: timeoutSeconds
+                ApiVersion.Group, ApiVersion.Version, watchedNamespace, plural, watch: true, timeoutSeconds: 30
             );
+
+            Logger.LogInformation("Watching {plural} resource in {namespace} namespace", plural, watchedNamespace);
 
             while (!token.IsCancellationRequested) {
                 result.Watch<TCustomResource, object>(HandleItem, HandleException);
             }
         }
 
-        public T GetAttribute<T>() where T: Attribute 
+        public TAttribute GetAttribute<TResource, TAttribute>() where TAttribute: Attribute 
         {
-            T attribute = Attribute.GetCustomAttribute(this.GetType(), typeof(T)) as T;
+            TAttribute attribute = Attribute.GetCustomAttribute(typeof(TResource), typeof(TAttribute)) as TAttribute;
 
             return attribute;
         }

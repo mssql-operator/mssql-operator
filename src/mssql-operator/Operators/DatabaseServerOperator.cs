@@ -8,7 +8,7 @@ namespace MSSqlOperator.Operators
 {
     public class DatabaseServerOperator : Operator<DatabaseServerResource>
     {
-        public DatabaseServerOperator(Kubernetes client, ILogger<Operator<DatabaseServerResource>> logger, int timeoutSeconds) : base(client, logger, timeoutSeconds)
+        public DatabaseServerOperator(Kubernetes client, ILogger<Operator<DatabaseServerResource>> logger) : base(client, logger)
         {
         }
 

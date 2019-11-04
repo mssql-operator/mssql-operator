@@ -1,23 +1,7 @@
 apiVersion: mssql.techpyramid.ws/v1alpha1
-kind: DatabaseServer
-metadata:
-  name: techpyramid-dev
-  namespace: "default"
-spec:
-  serviceUrl: techpyramid-dev-sql.default.svc.cluster.local:1433
-  serviceSelector:
-    matchLabels:
-      service: sql
-  adminUser: sa
-  adminPasswordSecret:
-    secretKeyRef:
-      name: mssql
-      key: adminPassword
----
-apiVersion: mssql.techpyramid.ws/v1alpha1
 kind: Database
 metadata:
-  name: "Authentication"
+  name: "authentication"
   namespace: "default"
   labels:
     database-server: dev
@@ -28,15 +12,15 @@ spec:
   datafiles:
     primary:
       - name: "Authentication"
-      - path: /var/log/mssql/data/Authentication.mdf
+      - path: /var/opt/mssql/data/Authentication.mdf
   logfiles:
     - name: "Authentication_log"
-    - path: /var/log/mssql/data/Authentication_log.ldf
+    - path: /var/opt/mssql/data/Authentication_log.ldf
 ---
 apiVersion: mssql.techpyramid.ws/v1alpha1
 kind: Database
 metadata:
-  name: "Accounts"
+  name: "accounts"
   namespace: "default"
   labels:
     database-server: dev
@@ -44,13 +28,11 @@ spec:
   databaseSelector:
     matchLabels:
       database-server: dev
-  backupfiles:
-    - path: /backups/Accounts.bak
   datafiles:
     primary:
       - name: "Accounts"
-      - path: /var/log/mssql/data/Accounts.mdf
+      - path: /var/opt/mssql/data/Accounts.mdf
   logfiles:
     - name: "Accounts_log"
-    - path: /var/log/mssql/data/Accounts_log.ldf
+    - path: /var/opt/mssql/data/Accounts_log.ldf
   collation: "default"

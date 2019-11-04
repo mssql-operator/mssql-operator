@@ -1,0 +1,17 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: databaseservers.mssql.techpyramid.ws
+spec:
+  group: mssql.techpyramid.ws
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+  scope: Namespaced
+  names:
+    plural: databaseservers
+    singular: databaseserver
+    kind: DatabaseServer
+    shortNames:
+    - dbms

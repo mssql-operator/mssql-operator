@@ -1,0 +1,15 @@
+apiVersion: mssql.techpyramid.ws/v1alpha1
+kind: DatabaseServer
+metadata:
+  name: techpyramid-dev
+  namespace: "default"
+spec:
+  # serviceUrl: techpyramid-dev-sql.default.svc.cluster.local:1433
+  serviceSelector:
+    matchLabels:
+      tier: db
+  adminUser: sa
+  adminPasswordSecret:
+    secretKeyRef:
+      name: mssql
+      key: SA_PASSWORD
