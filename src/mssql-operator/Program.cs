@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MSSqlOperator.Operators;
 using System.Threading;
+using MSSqlOperator.Services;
 
 namespace MSSqlOperator
 {
@@ -16,10 +17,11 @@ namespace MSSqlOperator
         {
             var services = ConfigureServices();
             var tokenSource = new CancellationTokenSource();
+            var ctrlc = new ManualResetEventSlim();
             try
             {
                 // TODO: Would using a HostBuilder make this better?
-                Console.CancelKeyPress += (_, __) => { tokenSource.Cancel(); };
+                Console.CancelKeyPress += (_, __) => { tokenSource.Cancel(); ctrlc.Set(); };
 
                 var operators = new List<IOperatorScope>
                 {
@@ -29,6 +31,7 @@ namespace MSSqlOperator
 
                 var tasks = operators.Select(os => os.StartAsync("default", tokenSource.Token));
                 await Task.WhenAll(tasks);
+                ctrlc.Wait();
             }
             finally
             {
@@ -36,6 +39,7 @@ namespace MSSqlOperator
                     disposable.Dispose();
                 }
                 tokenSource.Dispose();
+                ctrlc.Dispose();
             }
             
         }
@@ -46,7 +50,11 @@ namespace MSSqlOperator
 
             services.AddLogging(configure => configure.AddConsole())
                 .Configure<LoggerFilterOptions>(configure => configure.MinLevel = LogLevel.Debug);
-            services.AddTransient(_ => new Kubernetes(KubernetesClientConfiguration.InClusterConfig()));
+            services.AddScoped<IKubernetes, Kubernetes>(_ => {
+                var config = KubernetesClientConfiguration.IsInCluster() ? KubernetesClientConfiguration.InClusterConfig() : KubernetesClientConfiguration.BuildDefaultConfig();
+                return new Kubernetes(config);
+            });
+            services.AddScoped<IKubernetesService, KubernetesService>();
             services.AddScoped<DatabaseOperator>();
             services.AddScoped<DatabaseServerOperator>();
 

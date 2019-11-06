@@ -10,13 +10,17 @@ using k8s.Models;
 using System.Text;
 using Microsoft.SqlServer.Management.Smo;
 using Microsoft.SqlServer.Management.Common;
+using MSSqlOperator.Services;
 
 namespace MSSqlOperator.Operators
 {
     public class DatabaseOperator : Operator<DatabaseResource>
     {
-        public DatabaseOperator(Kubernetes client, ILogger<Operator<DatabaseResource>> logger) : base(client, logger)
+        private readonly IKubernetesService service;
+
+        public DatabaseOperator(IKubernetes client, ILogger<Operator<DatabaseResource>> logger, IKubernetesService service) : base(client, logger)
         {
+            this.service = service;
         }
 
         public override void HandleException(Exception ex)
@@ -27,7 +31,6 @@ namespace MSSqlOperator.Operators
         public override void HandleItem(WatchEventType eventType, DatabaseResource item)
         {
             Logger.LogDebug("Recieved new Database object (v {ResourceVersion})", item.Metadata.ResourceVersion);
-            return;
             try {
                 DatabaseServer server = GetServerResources(item.Metadata.NamespaceProperty, item.Spec.DatabaseSelector);
                 var builder = new SqlConnectionStringBuilder
@@ -116,38 +119,33 @@ namespace MSSqlOperator.Operators
 
         public DatabaseServer GetServerResources(string namespaceProperty, V1LabelSelector selector) 
         {
-            var serverSelector = selector.BuildSelector();
-            Logger.LogDebug("Loading referenced server {selector}", serverSelector);
-            var server = (Client.ListNamespacedCustomObject(ApiVersion.Group, ApiVersion.Version, namespaceProperty, "DatabaseServers", labelSelector: serverSelector) as JObject).ToObject<DatabaseServerResource>();
+            var server = service.GetDatabaseServer(namespaceProperty, selector);
 
-            if (string.IsNullOrEmpty(server.Spec.ServiceUrl) && server.Spec.ServiceSelector != null)
+            if (string.IsNullOrEmpty(server?.Spec.ServiceUrl) && server?.Spec.ServiceSelector != null)
             {
-                var serviceSelector = server.Spec.ServiceSelector.BuildSelector();
-                Logger.LogDebug("Loading referenced service {selector}", serviceSelector);
-                var service = Client.ListNamespacedService(namespaceProperty, labelSelector: serviceSelector)?.Items?.FirstOrDefault();
-                server.Spec.ServiceUrl = $"{service.Metadata.Name}.{service.Metadata.NamespaceProperty}.svc:{service.Spec.Ports.FirstOrDefault()?.Port}";
+                var sqlService = service.GetService(namespaceProperty, server.Spec.ServiceSelector);
+                server.Spec.ServiceUrl = $"{sqlService.Metadata.Name}.{sqlService.Metadata.NamespaceProperty}.svc:{sqlService.Spec.Ports.FirstOrDefault()?.Port}";
             }
 
-            if (string.IsNullOrEmpty(server.Spec.AdminPasswordSecret.Value) && server.Spec.AdminPasswordSecret.SecretKeyRef != null)
+            if (string.IsNullOrEmpty(server?.Spec.AdminPasswordSecret.Value) && server?.Spec.AdminPasswordSecret.SecretKeyRef != null)
             {
                 server.Spec.AdminPasswordSecret.Value = GetValueForSecretReference(namespaceProperty, server.Spec.AdminPasswordSecret.SecretKeyRef);
             }
 
-            return server.Spec;
+            return server?.Spec;
         }
 
         private string GetValueForSecretReference(string namespaceProperty, V1SecretKeySelector keyRef)
         {
-            Logger.LogDebug("Loading referenced secret {secret}:{key}", keyRef.Name, keyRef.Key);
-            var secret = Client.ReadNamespacedSecret(keyRef.Name, namespaceProperty);
-            if (secret.Data.ContainsKey(keyRef.Key))
+            var secret = service.GetSecret(namespaceProperty, keyRef.Name);
+            if (secret?.Data.ContainsKey(keyRef.Key) ?? false)
             {
                 var data = secret.Data[keyRef.Key];
                 return Encoding.Default.GetString(data);
             }
             else
             {
-                Logger.LogWarning("No secret could be found to satisfy adminPasswordSecret");
+                Logger.LogWarning("Secret named {secret}:{key} could be found to satisfy adminPasswordSecret", keyRef.Name, keyRef.Key);
             }
 
             return null;

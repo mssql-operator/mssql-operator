@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace MSSqlOperator
 {
@@ -21,7 +22,15 @@ namespace MSSqlOperator
         public async Task StartAsync(string watchedNamespace, CancellationToken token)
         {
             var instance = scope.ServiceProvider.GetService<TOperator>();
-            await instance.WatchAsync(token, watchedNamespace);
+            var logger = scope.ServiceProvider.GetService<ILogger<OperatorScope<TOperator>>>();
+
+            try 
+            {
+                await instance.WatchAsync(token, watchedNamespace);
+            }
+            catch (Exception ex) {
+                logger.LogError("An error occurred during operator execution", ex);
+            }
         }
 
         #region IDisposable Support
