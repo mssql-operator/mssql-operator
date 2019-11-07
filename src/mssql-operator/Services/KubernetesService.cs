@@ -8,6 +8,7 @@ using MSSqlOperator.Models;
 using MSSqlOperator.Operators;
 using Newtonsoft.Json.Linq;
 using OperatorSharp;
+using OperatorSharp.CustomResources;
 
 namespace MSSqlOperator.Services
 {
@@ -22,7 +23,7 @@ namespace MSSqlOperator.Services
             this.logger = logger;
         }
 
-        public DatabaseServerResource GetDatabaseServer(string namespaceProperty, V1LabelSelector selector)
+        public CustomResourceList<DatabaseServerResource> GetDatabaseServer(string namespaceProperty, V1LabelSelector selector)
         {
             try
             {
@@ -31,7 +32,7 @@ namespace MSSqlOperator.Services
                 var plural = DatabaseServerOperator.PluralName.ToLower();
                 var query = client.ListNamespacedCustomObject(DatabaseServerOperator.ApiVersion.Group, DatabaseServerOperator.ApiVersion.Version, namespaceProperty, plural, labelSelector: serverSelector);
                 
-                var server = ((JObject)query).ToObject<DatabaseServerResource>();
+                var server = ((JObject)query).ToObject<CustomResourceList<DatabaseServerResource>>();
 
                 return server;
             }
@@ -41,13 +42,13 @@ namespace MSSqlOperator.Services
             }
         }
 
-        public V1Service GetService(string namespaceProperty, V1LabelSelector selector)
+        public V1ServiceList GetService(string namespaceProperty, V1LabelSelector selector)
         {
             try
             {
                 var serviceSelector = selector.BuildSelector();
                 logger.LogDebug("Loading referenced service {selector}", serviceSelector);
-                var service = client.ListNamespacedService(namespaceProperty, labelSelector: serviceSelector)?.Items?.FirstOrDefault();
+                var service = client.ListNamespacedService(namespaceProperty, labelSelector: serviceSelector);
 
                 return service;
             }

@@ -26,7 +26,7 @@ namespace MSSqlOperator
                 var operators = new List<IOperatorScope>
                 {
                     new OperatorScope<DatabaseOperator>(services),
-                    new OperatorScope<DatabaseServerOperator>(services)
+                    // new OperatorScope<DatabaseServerOperator>(services)
                 };
 
                 var tasks = operators.Select(os => os.StartAsync("default", tokenSource.Token));
@@ -55,6 +55,7 @@ namespace MSSqlOperator
                 return new Kubernetes(config);
             });
             services.AddScoped<IKubernetesService, KubernetesService>();
+            services.AddScoped<ISqlManagementService, SqlManagementService>();
             services.AddScoped<DatabaseOperator>();
             services.AddScoped<DatabaseServerOperator>();
 
