@@ -60,7 +60,7 @@ namespace MSSqlOperator.Services
             logger.LogDebug("Processing create for {database}", item.Metadata.Name);
             var serverConn = CreateServerConnection(serverResource);
 
-            var database = new Database(serverConn, item.Metadata.Name) { Collation = NewMethod(item) };
+            var database = new Database(serverConn, item.Metadata.Name) { Collation = ChooseCollation(item) };
             foreach (var groupEntry in item.Spec.DataFiles)
             {
                 var fileGroupName = groupEntry.Key;
