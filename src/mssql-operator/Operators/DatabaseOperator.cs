@@ -42,16 +42,19 @@ namespace MSSqlOperator.Operators
                         if (sqlService.DoesDatabaseExist(server.Spec, item.Metadata.Name)) 
                         {
                             Logger.LogInformation("Database {database} already exists on server {server}", item.Metadata.Name, server.Metadata.Name);
+                            k8sService.UpdateDatabaseStatus(item, "Available", "Database already exists", DateTimeOffset.Now);
                             continue;
                         } 
 
                         if (item.Spec.BackupFiles?.Any() ?? false) 
                         {
                             sqlService.RestoreDatabase(server.Spec, item);
+                            k8sService.UpdateDatabaseStatus(item, "Available", "Database restored", DateTimeOffset.Now);
                         }
                         else
                         {
                             sqlService.CreateDatabase(server.Spec, item);
+                            k8sService.UpdateDatabaseStatus(item, "Available", "Database created", DateTimeOffset.Now);
                         }
 
                         Logger.LogInformation("Created database {database}", item.Metadata.Name);
@@ -68,6 +71,15 @@ namespace MSSqlOperator.Operators
             catch (Exception ex)
             {
                 Logger.LogError(ex, "An error occurred during message processing");
+
+                try
+                {
+                    k8sService.UpdateDatabaseStatus(item, "Failed", "Database", DateTimeOffset.Now);
+                    k8sService.EmitEvent("CreateDatabase", "Failed", ex.Message, DateTimeOffset.Now, item);
+                }
+                catch (Exception) {
+                    throw;
+                }
             }
         }
 
