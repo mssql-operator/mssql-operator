@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using k8s;
 using k8s.Models;
@@ -80,8 +80,8 @@ namespace MSSqlOperator.Services
                 Reason = reason,
                 Message = message
             };
-
-            client.PatchNamespacedCustomObjectStatus(resource, DatabaseOperator.ApiVersion.Group, DatabaseOperator.ApiVersion.Version, resource.Metadata.NamespaceProperty, DatabaseOperator.PluralName, resource.Metadata.Name);
+            
+            client.ReplaceNamespacedCustomObjectStatus(resource, DatabaseOperator.ApiVersion.Group, DatabaseOperator.ApiVersion.Version, resource.Metadata.NamespaceProperty, DatabaseOperator.PluralName, resource.Metadata.Name);
         }
 
         public void EmitEvent(string action, string reason, string message, DateTimeOffset eventTime, CustomResource involvedObject)

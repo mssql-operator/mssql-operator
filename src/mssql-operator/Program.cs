@@ -9,6 +9,7 @@ using MSSqlOperator.Operators;
 using System.Threading;
 using MSSqlOperator.Services;
 using System.Net.Http;
+using Microsoft.Extensions.Http.Logging;
 
 namespace MSSqlOperator
 {
@@ -53,10 +54,11 @@ namespace MSSqlOperator
             services.AddLogging(configure => configure.AddConsole())
                 .Configure<LoggerFilterOptions>(configure => configure.MinLevel = LogLevel.Debug);
             services.AddScoped<IKubernetes, Kubernetes>(provider => {
-                var factory = provider.GetRequiredService<IHttpClientFactory>();
-                var client = factory.CreateClient("k8s");
+                var factory = provider.GetRequiredService<ILoggerFactory>();
+                var logger = factory.CreateLogger<HttpClient>();
+                var loggingHandler = new LoggingHttpMessageHandler(logger);
                 var config = KubernetesClientConfiguration.IsInCluster() ? KubernetesClientConfiguration.InClusterConfig() : KubernetesClientConfiguration.BuildDefaultConfig();
-                return new Kubernetes(config, client, true);
+                return new Kubernetes(config, loggingHandler);
             });
             services.AddScoped<IKubernetesService, KubernetesService>();
             services.AddScoped<ISqlManagementService, SqlManagementService>();

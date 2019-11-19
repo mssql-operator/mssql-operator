@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using k8s;
@@ -74,8 +74,8 @@ namespace MSSqlOperator.Operators
 
                 try
                 {
-                    k8sService.UpdateDatabaseStatus(item, "Failed", "Database", DateTimeOffset.Now);
                     k8sService.EmitEvent("CreateDatabase", "Failed", ex.Message, DateTimeOffset.Now, item);
+                    k8sService.UpdateDatabaseStatus(item, "Failed", "Database", DateTimeOffset.Now);
                 }
                 catch (Exception) {
                     throw;
