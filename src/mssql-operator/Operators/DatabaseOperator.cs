@@ -76,7 +76,7 @@ namespace MSSqlOperator.Operators
                 try
                 {
                     k8sService.UpdateDatabaseStatus(item, "Failed", ex.GetType().Name, DateTimeOffset.Now);
-                    k8sService.EmitEvent("CreateDatabase", "Failed", ex.Message, DateTime.Now, item);
+                    k8sService.EmitEvent("CreateDatabase", "Failed", ex.Message, item);
                 }
                 catch (HttpOperationException httpEx)
                 {
