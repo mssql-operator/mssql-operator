@@ -20,11 +20,13 @@ namespace MSSqlOperator.Operators
     {
         private readonly IKubernetesService k8sService;
         private readonly ISqlManagementService sqlService;
+        private readonly IEventRecorder<DatabaseResource> eventRecorder;
 
-        public DatabaseOperator(IKubernetes client, ILogger<Operator<DatabaseResource>> logger, IKubernetesService k8sService, ISqlManagementService sqlService) : base(client, logger)
+        public DatabaseOperator(IKubernetes client, ILogger<Operator<DatabaseResource>> logger, IKubernetesService k8sService, ISqlManagementService sqlService, IEventRecorder<DatabaseResource> eventRecorder) : base(client, logger)
         {
             this.k8sService = k8sService;
             this.sqlService = sqlService;
+            this.eventRecorder = eventRecorder;
         }
 
         public override void HandleException(Exception ex)
@@ -76,7 +78,15 @@ namespace MSSqlOperator.Operators
                 try
                 {
                     k8sService.UpdateDatabaseStatus(item, "Failed", ex.GetType().Name, DateTimeOffset.Now);
-                    k8sService.EmitEvent("CreateDatabase", "Failed", ex.Message, item);
+                    eventRecorder.Record("CreateDatabase", 
+                        "Failed", 
+                        ex.Message, 
+                        new V1ObjectReference(
+                            item.ApiVersion, 
+                            kind: item.Kind, 
+                            name: item.Metadata.Name,
+                            namespaceProperty: item.Metadata.NamespaceProperty)
+                    );
                 }
                 catch (HttpOperationException httpEx)
                 {

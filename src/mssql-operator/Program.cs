@@ -10,6 +10,7 @@ using System.Threading;
 using MSSqlOperator.Services;
 using System.Net.Http;
 using Microsoft.Extensions.Http.Logging;
+using OperatorSharp;
 
 namespace MSSqlOperator
 {
@@ -62,6 +63,7 @@ namespace MSSqlOperator
             });
             services.AddScoped<IKubernetesService, KubernetesService>();
             services.AddScoped<ISqlManagementService, SqlManagementService>();
+            services.AddScoped<IEventRecorder<DatabaseResource> ,EventRecorder<DatabaseResource>>();
             services.AddScoped<DatabaseOperator>();
             services.AddScoped<DatabaseServerOperator>();
 
