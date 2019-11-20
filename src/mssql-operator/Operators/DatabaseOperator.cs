@@ -12,6 +12,7 @@ using Microsoft.SqlServer.Management.Smo;
 using Microsoft.SqlServer.Management.Common;
 using MSSqlOperator.Services;
 using System.Collections.Generic;
+using Microsoft.Rest;
 
 namespace MSSqlOperator.Operators
 {
@@ -74,8 +75,13 @@ namespace MSSqlOperator.Operators
 
                 try
                 {
-                    k8sService.EmitEvent("CreateDatabase", "Failed", ex.Message, DateTimeOffset.Now, item);
-                    k8sService.UpdateDatabaseStatus(item, "Failed", "Database", DateTimeOffset.Now);
+                    k8sService.UpdateDatabaseStatus(item, "Failed", ex.GetType().Name, DateTimeOffset.Now);
+                    k8sService.EmitEvent("CreateDatabase", "Failed", ex.Message, DateTime.Now, item);
+                }
+                catch (HttpOperationException httpEx)
+                {
+                    Logger.LogError(httpEx, "An error occurred logging this info to Kubernetes");
+                    Logger.LogDebug(httpEx.Response.Content);
                 }
                 catch (Exception) {
                     throw;
