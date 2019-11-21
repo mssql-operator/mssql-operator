@@ -3,7 +3,6 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
 WORKDIR /src
-COPY ["OperatorSharp/OperatorSharp.csproj", "OperatorSharp/"]
 COPY ["mssql-operator/mssql-operator.csproj", "mssql-operator/"]
 RUN dotnet restore "mssql-operator/mssql-operator.csproj"
 COPY . .
