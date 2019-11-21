@@ -9,6 +9,8 @@ spec:
       served: true
       storage: true
   scope: Namespaced
+  subresources:
+    status: {}
   names:
     plural: databases
     singular: database

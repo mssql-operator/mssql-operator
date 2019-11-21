@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using k8s;
@@ -12,6 +12,7 @@ using Microsoft.SqlServer.Management.Smo;
 using Microsoft.SqlServer.Management.Common;
 using MSSqlOperator.Services;
 using System.Collections.Generic;
+using Microsoft.Rest;
 
 namespace MSSqlOperator.Operators
 {
@@ -19,11 +20,13 @@ namespace MSSqlOperator.Operators
     {
         private readonly IKubernetesService k8sService;
         private readonly ISqlManagementService sqlService;
+        private readonly IEventRecorder<DatabaseResource> eventRecorder;
 
-        public DatabaseOperator(IKubernetes client, ILogger<Operator<DatabaseResource>> logger, IKubernetesService k8sService, ISqlManagementService sqlService) : base(client, logger)
+        public DatabaseOperator(IKubernetes client, ILogger<Operator<DatabaseResource>> logger, IKubernetesService k8sService, ISqlManagementService sqlService, IEventRecorder<DatabaseResource> eventRecorder) : base(client, logger)
         {
             this.k8sService = k8sService;
             this.sqlService = sqlService;
+            this.eventRecorder = eventRecorder;
         }
 
         public override void HandleException(Exception ex)
@@ -42,16 +45,19 @@ namespace MSSqlOperator.Operators
                         if (sqlService.DoesDatabaseExist(server.Spec, item.Metadata.Name)) 
                         {
                             Logger.LogInformation("Database {database} already exists on server {server}", item.Metadata.Name, server.Metadata.Name);
+                            k8sService.UpdateDatabaseStatus(item, "Available", "Database already exists", DateTimeOffset.Now);
                             continue;
                         } 
 
                         if (item.Spec.BackupFiles?.Any() ?? false) 
                         {
                             sqlService.RestoreDatabase(server.Spec, item);
+                            k8sService.UpdateDatabaseStatus(item, "Available", "Database restored", DateTimeOffset.Now);
                         }
                         else
                         {
                             sqlService.CreateDatabase(server.Spec, item);
+                            k8sService.UpdateDatabaseStatus(item, "Available", "Database created", DateTimeOffset.Now);
                         }
 
                         Logger.LogInformation("Created database {database}", item.Metadata.Name);
@@ -68,6 +74,28 @@ namespace MSSqlOperator.Operators
             catch (Exception ex)
             {
                 Logger.LogError(ex, "An error occurred during message processing");
+
+                try
+                {
+                    k8sService.UpdateDatabaseStatus(item, "Failed", ex.GetType().Name, DateTimeOffset.Now);
+                    eventRecorder.Record("CreateDatabase", 
+                        "Failed", 
+                        ex.Message, 
+                        new V1ObjectReference(
+                            item.ApiVersion, 
+                            kind: item.Kind, 
+                            name: item.Metadata.Name,
+                            namespaceProperty: item.Metadata.NamespaceProperty)
+                    );
+                }
+                catch (HttpOperationException httpEx)
+                {
+                    Logger.LogError(httpEx, "An error occurred logging this info to Kubernetes");
+                    Logger.LogDebug(httpEx.Response.Content);
+                }
+                catch (Exception) {
+                    throw;
+                }
             }
         }
 

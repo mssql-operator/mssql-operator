@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using k8s;
 using k8s.Models;
@@ -71,6 +71,25 @@ namespace MSSqlOperator.Services
             {
                 return null;
             }
+        }
+
+        public void UpdateDatabaseStatus(DatabaseResource resource, string reason, string message, DateTimeOffset date) 
+        {
+            resource.Status = new DatabaseStatus {
+                LastUpdate = date,
+                Reason = reason,
+                Message = message
+            };
+            
+            client.ReplaceNamespacedCustomObjectStatus(resource, DatabaseOperator.ApiVersion.Group, DatabaseOperator.ApiVersion.Version, resource.Metadata.NamespaceProperty, DatabaseOperator.PluralName, resource.Metadata.Name);
+        }
+
+        public void EmitEvent(string action, string reason, string message, CustomResource involvedObject)
+        {
+            var objRef = new V1ObjectReference(involvedObject.ApiVersion, kind: involvedObject.Kind, name: involvedObject.Metadata.Name, namespaceProperty: involvedObject.Metadata.NamespaceProperty);
+            V1Event ev = new V1Event(objRef, new V1ObjectMeta() { GenerateName = involvedObject.Metadata.Name }, action: action, message: message, reason: reason, firstTimestamp: DateTime.Now);
+
+            client.CreateNamespacedEvent(ev, involvedObject.Metadata.NamespaceProperty);
         }
     }
 }
