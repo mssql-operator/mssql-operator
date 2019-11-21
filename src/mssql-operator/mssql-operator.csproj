@@ -11,11 +11,8 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.0.0" />
     <PackageReference Include="Microsoft.SqlServer.SqlManagementObjects" Version="150.18178.0" />
+    <PackageReference Include="OperatorSharp" Version="1.0.0-prerelease-20191121014057" />
     <PackageReference Include="System.Data.SqlClient" Version="4.7.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\OperatorSharp\OperatorSharp.csproj" />
   </ItemGroup>
 
 </Project>
