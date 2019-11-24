@@ -13,6 +13,7 @@ using Microsoft.SqlServer.Management.Common;
 using MSSqlOperator.Services;
 using System.Collections.Generic;
 using Microsoft.Rest;
+using MSSqlOperator.DatabaseServers;
 
 namespace MSSqlOperator.Operators
 {
@@ -104,40 +105,15 @@ namespace MSSqlOperator.Operators
             var servers = k8sService.GetDatabaseServer(namespaceProperty, selector);
 
             foreach (var server in servers.Items) {
-                if (string.IsNullOrEmpty(server?.Spec.ServiceUrl) && server?.Spec.ServiceSelector != null)
-                {
-                    var services = k8sService.GetService(namespaceProperty, server.Spec.ServiceSelector);
-                    var sqlService = services?.Items?.FirstOrDefault();
+                k8sService.Rehydrate(server);
 
-                    if (sqlService != null) 
-                    {
-                        server.Spec.ServiceUrl = $"{sqlService.Metadata.Name}.{sqlService.Metadata.NamespaceProperty}.svc,{sqlService.Spec.Ports.FirstOrDefault()?.Port}";
-                    }
-                }
-
-                if (string.IsNullOrEmpty(server?.Spec.AdminPasswordSecret.Value) && server?.Spec.AdminPasswordSecret.SecretKeyRef != null)
+                if (server.Spec.AdminPasswordSecret.Value == null)
                 {
-                    server.Spec.AdminPasswordSecret.Value = GetValueForSecretReference(namespaceProperty, server.Spec.AdminPasswordSecret.SecretKeyRef);
+                    Logger.LogWarning("Secret named {secret}:{key} could be found to satisfy adminPasswordSecret", server.Spec.AdminPasswordSecret.SecretKeyRef.Name, server.Spec.AdminPasswordSecret.SecretKeyRef.Key);
                 }
             }
 
             return servers.Items;
-        }
-
-        private string GetValueForSecretReference(string namespaceProperty, V1SecretKeySelector keyRef)
-        {
-            var secret = k8sService.GetSecret(namespaceProperty, keyRef.Name);
-            if (secret?.Data.ContainsKey(keyRef.Key) ?? false)
-            {
-                var data = secret.Data[keyRef.Key];
-                return Encoding.Default.GetString(data);
-            }
-            else
-            {
-                Logger.LogWarning("Secret named {secret}:{key} could be found to satisfy adminPasswordSecret", keyRef.Name, keyRef.Key);
-            }
-
-            return null;
         }
     }
 }

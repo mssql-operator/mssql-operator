@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using k8s.Models;
 using OperatorSharp.CustomResources;
 using OperatorSharp.CustomResources.Metadata;
@@ -9,6 +9,7 @@ namespace MSSqlOperator.Models
     [Kind("DatabaseServer")]
     [PluralName("DatabaseServers")]
     [ShortName("dbms")]
+    [ResourceScope(ResourceScopes.Namespaced)]
     public class DatabaseServerResource : CustomResource<DatabaseServer, DatabaseServerStatus>
     {
     }
