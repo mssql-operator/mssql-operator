@@ -1,6 +1,6 @@
-using System;
+﻿using System;
 
-namespace MSSqlOperator.Models
+namespace MSSqlOperator.Databases
 {
     public enum FileType {
         Unknown = 0,

@@ -2,20 +2,14 @@
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using k8s;
-using MSSqlOperator.Models;
-using Newtonsoft.Json.Linq;
 using OperatorSharp;
-using System.Data.SqlClient;
 using k8s.Models;
-using System.Text;
-using Microsoft.SqlServer.Management.Smo;
-using Microsoft.SqlServer.Management.Common;
 using MSSqlOperator.Services;
 using System.Collections.Generic;
 using Microsoft.Rest;
 using MSSqlOperator.DatabaseServers;
 
-namespace MSSqlOperator.Operators
+namespace MSSqlOperator.Databases
 {
     public class DatabaseOperator : Operator<DatabaseResource>
     {

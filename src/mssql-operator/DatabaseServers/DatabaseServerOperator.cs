@@ -1,10 +1,9 @@
-using System;
+﻿using System;
 using k8s;
 using Microsoft.Extensions.Logging;
-using MSSqlOperator.Models;
 using OperatorSharp;
 
-namespace MSSqlOperator.Operators
+namespace MSSqlOperator.DatabaseServers
 {
     public class DatabaseServerOperator : Operator<DatabaseServerResource>
     {

@@ -5,7 +5,6 @@ using System.Linq;
 using k8s;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using MSSqlOperator.Operators;
 using System.Threading;
 using MSSqlOperator.Services;
 using System.Net.Http;
@@ -14,6 +13,7 @@ using OperatorSharp;
 using MSSqlOperator.DatabaseServers;
 using MSSqlOperator.DeploymentScripts;
 using App.Metrics;
+using MSSqlOperator.Databases;
 
 namespace MSSqlOperator
 {

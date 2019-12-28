@@ -3,7 +3,7 @@ using k8s.Models;
 using OperatorSharp.CustomResources;
 using OperatorSharp.CustomResources.Metadata;
 
-namespace MSSqlOperator.Models
+namespace MSSqlOperator.DatabaseServers
 {
     [ApiVersion("mssql.techpyramid.ws/v1alpha1")]
     [Kind("DatabaseServer")]

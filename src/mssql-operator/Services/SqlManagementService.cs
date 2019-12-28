@@ -4,7 +4,8 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Microsoft.SqlServer.Management.Common;
 using Microsoft.SqlServer.Management.Smo;
-using MSSqlOperator.Models;
+using MSSqlOperator.Databases;
+using MSSqlOperator.DatabaseServers;
 
 namespace MSSqlOperator.Services
 {

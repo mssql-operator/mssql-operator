@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Linq;
 using k8s;
 using k8s.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Rest;
+using MSSqlOperator.Databases;
+using MSSqlOperator.DatabaseServers;
 using MSSqlOperator.DeploymentScripts;
-using MSSqlOperator.Models;
-using MSSqlOperator.Operators;
 using Newtonsoft.Json.Linq;
 using OperatorSharp;
 using OperatorSharp.CustomResources;

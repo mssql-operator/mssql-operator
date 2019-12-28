@@ -1,4 +1,4 @@
-namespace MSSqlOperator.Models
+﻿namespace MSSqlOperator.DatabaseServers
 {
     public class DatabaseServerStatus
     {

@@ -1,4 +1,4 @@
-namespace MSSqlOperator
+﻿namespace MSSqlOperator.Databases
 {
     public enum GarbageCollectionStrategy
     {

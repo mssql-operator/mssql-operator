@@ -1,6 +1,6 @@
-using System;
+﻿using System;
 
-namespace MSSqlOperator
+namespace MSSqlOperator.Databases
 {
     public class DatabaseStatus 
     {

@@ -1,7 +1,8 @@
 ﻿using System;
 using k8s.Models;
+using MSSqlOperator.Databases;
+using MSSqlOperator.DatabaseServers;
 using MSSqlOperator.DeploymentScripts;
-using MSSqlOperator.Models;
 using OperatorSharp.CustomResources;
 
 namespace MSSqlOperator.Services

@@ -1,6 +1,6 @@
-using k8s.Models;
+﻿using k8s.Models;
 
-namespace MSSqlOperator.Models
+namespace MSSqlOperator.DatabaseServers
 {
     public class SecretSource {
         public string Value { get; set; }

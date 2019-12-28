@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using k8s.Models;
 using Microsoft.SqlServer.Management.Smo;
 using OperatorSharp.CustomResources;
 using OperatorSharp.CustomResources.Metadata;
 
-namespace MSSqlOperator
+namespace MSSqlOperator.Databases
 {
     [ApiVersion("mssql.techpyramid.ws/v1alpha1")]
     [Kind("Database")]

@@ -1,4 +1,5 @@
-using MSSqlOperator.Models;
+﻿using MSSqlOperator.Databases;
+using MSSqlOperator.DatabaseServers;
 
 namespace MSSqlOperator.Services
 {
