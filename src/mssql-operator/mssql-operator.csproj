@@ -1,18 +1,21 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <RootNamespace>MSSqlOperator</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="App.Metrics.Reporting.Console" Version="3.2.0" />
     <PackageReference Include="KubernetesClient" Version="1.6.3" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.0.0" />
     <PackageReference Include="Microsoft.SqlServer.SqlManagementObjects" Version="150.18178.0" />
-    <PackageReference Include="OperatorSharp" Version="1.0.0-prerelease-20191121014057" />
+    <PackageReference Include="OperatorSharp" Version="1.0.0-prerelease-20191228050003" />
     <PackageReference Include="System.Data.SqlClient" Version="4.7.0" />
+    <DotNetCliToolReference Include="OperatorSharp.Tools.DotNet" Version="1.0.0-prerelease-20191204041255" />
   </ItemGroup>
 
 </Project>

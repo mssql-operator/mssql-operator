@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Data.SqlClient;
 using System.Linq;
 using Microsoft.Extensions.Logging;
@@ -102,7 +102,7 @@ namespace MSSqlOperator.Services
 
         private static string ChooseCollation(DatabaseResource item)
         {
-            if (string.IsNullOrEmpty(item.Spec.Collation) || item.Spec.Collation.Equals("default", StringComparison.InvariantCultureIgnoreCase) )
+            if (string.IsNullOrEmpty(item.Spec.Collation) || item.Spec.Collation.Equals("default", StringComparison.InvariantCultureIgnoreCase))
             {
                 return "SQL_Latin1_General_CP1_CI_AS";
             }
@@ -122,6 +122,13 @@ namespace MSSqlOperator.Services
             var serverConn = new Server(new ServerConnection(new SqlConnection(builder.ToString())));
 
             return serverConn;
+        }
+
+        public void ExecuteScript(DatabaseServer serverResource, DatabaseResource databaseResource, string script)
+        {
+            var connection = CreateServerConnection(serverResource);
+            var database = connection.Databases[databaseResource.Metadata.Name];
+            database.ExecuteNonQuery(script);
         }
     }
 }

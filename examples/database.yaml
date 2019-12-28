@@ -12,10 +12,10 @@ spec:
   datafiles:
     primary:
       - name: "Authentication"
-      - path: /var/opt/mssql/data/Authentication.mdf
+        path: /var/opt/mssql/data/Authentication.mdf
   logfiles:
     - name: "Authentication_log"
-    - path: /var/opt/mssql/data/Authentication_log.ldf
+      path: /var/opt/mssql/data/Authentication_log.ldf
 ---
 apiVersion: mssql.techpyramid.ws/v1alpha1
 kind: Database
@@ -23,7 +23,7 @@ metadata:
   name: "accounts"
   namespace: "default"
   labels:
-    database-server: dev
+    database: accounts
 spec:
   databaseSelector:
     matchLabels:
@@ -31,8 +31,20 @@ spec:
   datafiles:
     primary:
       - name: "Accounts"
-      - path: /var/opt/mssql/data/Accounts.mdf
+        path: /var/opt/mssql/data/Accounts.mdf
   logfiles:
     - name: "Accounts_log"
-    - path: /var/opt/mssql/data/Accounts_log.ldf
+      path: /var/opt/mssql/data/Accounts_log.ldf
   collation: "default"
+---
+apiVersion: mssql.techpyramid.ws/v1alpha1
+kind: DeploymentScript
+metadata:
+  name: "generatetestdata"
+  namespace: default
+spec:
+  databaseSelector:
+    matchLabels:
+      database: accounts
+  script: |
+          SELECT 1;

@@ -4,6 +4,7 @@ using k8s;
 using k8s.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Rest;
+using MSSqlOperator.DeploymentScripts;
 using MSSqlOperator.Models;
 using MSSqlOperator.Operators;
 using Newtonsoft.Json.Linq;
@@ -35,6 +36,25 @@ namespace MSSqlOperator.Services
                 var server = ((JObject)query).ToObject<CustomResourceList<DatabaseServerResource>>();
 
                 return server;
+            }
+            catch (HttpOperationException opEx) when (opEx.Response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+        }
+
+        public CustomResourceList<DatabaseResource> GetDatabases(string namespaceProperty, V1LabelSelector selector)
+        {
+            try
+            {
+                var databaseSelector = selector.BuildSelector();
+                logger.LogDebug("Loading referenced server {selector}", databaseSelector);
+                var plural = DatabaseOperator.PluralName.ToLower();
+                var query = client.ListNamespacedCustomObject(DatabaseOperator.ApiVersion.Group, DatabaseOperator.ApiVersion.Version, namespaceProperty, plural, labelSelector: databaseSelector);
+
+                var databases = ((JObject)query).ToObject<CustomResourceList<DatabaseResource>>();
+
+                return databases;
             }
             catch (HttpOperationException opEx) when (opEx.Response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
@@ -80,8 +100,25 @@ namespace MSSqlOperator.Services
                 Reason = reason,
                 Message = message
             };
-            
-            client.ReplaceNamespacedCustomObjectStatus(resource, DatabaseOperator.ApiVersion.Group, DatabaseOperator.ApiVersion.Version, resource.Metadata.NamespaceProperty, DatabaseOperator.PluralName, resource.Metadata.Name);
+
+            UpdateStatus(resource);
+        }
+
+        public void UpdateDeploymentScriptStatus(DeploymentScriptResource resource, string reason, string message, DateTimeOffset date)
+        {
+            resource.Status = new DeploymentScriptStatus
+            {
+                LastUpdate = date,
+                Reason = reason,
+                Message = message
+            };
+
+            UpdateStatus(resource);
+        }
+
+        public void UpdateStatus<TSpec, TStatus>(CustomResource<TSpec, TStatus> resource)
+        {
+            client.ReplaceNamespacedCustomObjectStatus(resource, resource.ApiVersionMetadata.Group, resource.ApiVersionMetadata.Version, resource.Metadata.NamespaceProperty, resource.PluralName, resource.Metadata.Name);
         }
 
         public void EmitEvent(string action, string reason, string message, CustomResource involvedObject)

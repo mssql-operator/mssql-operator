@@ -2,14 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Extensions.Logging;
 using MSSqlOperator.Models;
 using MSSqlOperator.Services;
 
 namespace MSSqlOperator.DatabaseServers
 {
-    public static class DatabaseServerExtensions
+    public class DatabaseServerRehydrator
     {
-        public static DatabaseServerResource Rehydrate(this IKubernetesService service, DatabaseServerResource server)
+        private readonly IKubernetesService service;
+        private readonly ILogger<DatabaseServerRehydrator> logger;
+
+        public DatabaseServerRehydrator(IKubernetesService service, ILogger<DatabaseServerRehydrator> logger)
+        {
+            this.service = service;
+            this.logger = logger;
+        }
+
+        public DatabaseServerResource Rehydrate(DatabaseServerResource server)
         {
             if (string.IsNullOrEmpty(server?.Spec.ServiceUrl) && server?.Spec.ServiceSelector != null)
             {
@@ -24,13 +34,13 @@ namespace MSSqlOperator.DatabaseServers
 
             if (string.IsNullOrEmpty(server?.Spec.AdminPasswordSecret.Value) && server?.Spec.AdminPasswordSecret.SecretKeyRef != null)
             {
-                server.Spec.AdminPasswordSecret = service.Rehydrate(server.Metadata.NamespaceProperty, server.Spec.AdminPasswordSecret);
+                server.Spec.AdminPasswordSecret = Rehydrate(server.Metadata.NamespaceProperty, server.Spec.AdminPasswordSecret);
             }
 
             return server;
         }
 
-        public static SecretSource Rehydrate(this IKubernetesService service, string namespaceProperty, SecretSource secretSource)
+        public SecretSource Rehydrate(string namespaceProperty, SecretSource secretSource)
         {
             var keyRef = secretSource.SecretKeyRef;
             var secret = service.GetSecret(namespaceProperty, keyRef.Name);
@@ -38,6 +48,10 @@ namespace MSSqlOperator.DatabaseServers
             {
                 var data = secret.Data[keyRef.Key];
                 secretSource.Value = Encoding.Default.GetString(data);
+            }
+            else
+            {
+                logger.LogWarning("Secret named {secret}:{key} could be found to satisfy adminPasswordSecret", keyRef.Name, keyRef.Key);
             }
 
             return secretSource;

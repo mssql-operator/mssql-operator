@@ -22,12 +22,20 @@ namespace MSSqlOperator.Operators
         private readonly IKubernetesService k8sService;
         private readonly ISqlManagementService sqlService;
         private readonly IEventRecorder<DatabaseResource> eventRecorder;
+        private readonly DatabaseServerRehydrator rehydrator;
 
-        public DatabaseOperator(IKubernetes client, ILogger<Operator<DatabaseResource>> logger, IKubernetesService k8sService, ISqlManagementService sqlService, IEventRecorder<DatabaseResource> eventRecorder) : base(client, logger)
+        public DatabaseOperator(IKubernetes client, 
+            ILogger<Operator<DatabaseResource>> logger, 
+            IKubernetesService k8sService, 
+            ISqlManagementService sqlService, 
+            IEventRecorder<DatabaseResource> eventRecorder,
+            DatabaseServerRehydrator rehydrator)
+        : base(client, logger)
         {
             this.k8sService = k8sService;
             this.sqlService = sqlService;
             this.eventRecorder = eventRecorder;
+            this.rehydrator = rehydrator;
         }
 
         public override void HandleException(Exception ex)
@@ -105,12 +113,7 @@ namespace MSSqlOperator.Operators
             var servers = k8sService.GetDatabaseServer(namespaceProperty, selector);
 
             foreach (var server in servers.Items) {
-                k8sService.Rehydrate(server);
-
-                if (server.Spec.AdminPasswordSecret.Value == null)
-                {
-                    Logger.LogWarning("Secret named {secret}:{key} could be found to satisfy adminPasswordSecret", server.Spec.AdminPasswordSecret.SecretKeyRef.Name, server.Spec.AdminPasswordSecret.SecretKeyRef.Key);
-                }
+                rehydrator.Rehydrate(server);
             }
 
             return servers.Items;
