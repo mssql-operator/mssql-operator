@@ -8,7 +8,9 @@
 
   <ItemGroup>
     <PackageReference Include="App.Metrics.Reporting.Console" Version="3.2.0" />
+    <PackageReference Include="App.Metrics.Reporting.InfluxDB" Version="3.2.0" />
     <PackageReference Include="KubernetesClient" Version="1.6.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.0.0" />

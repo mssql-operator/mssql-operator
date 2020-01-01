@@ -14,6 +14,9 @@ using MSSqlOperator.DatabaseServers;
 using MSSqlOperator.DeploymentScripts;
 using App.Metrics;
 using MSSqlOperator.Databases;
+using App.Metrics.Formatters.Json;
+using Microsoft.Extensions.Configuration;
+using MSSqlOperator.Utilities;
 
 namespace MSSqlOperator
 {
@@ -64,17 +67,19 @@ namespace MSSqlOperator
 
         private static IServiceProvider ConfigureServices()
         {
+            var configuration = BuildConfiguration();
+
             var services = new ServiceCollection();
+            services.AddSingleton(configuration);
+
             services.AddHttpClient("k8s");
 
             services.AddLogging(configure => configure.AddConsole())
                 .Configure<LoggerFilterOptions>(configure => configure.MinLevel = LogLevel.Debug);
 
             services.AddMetrics(builder => {
-#if DEBUG
-                builder.Report.ToConsole();
-#endif
-                });
+                new MetricsReporterBuilder().Chain(builder.Report, configuration.GetSection("Metrics:Reporting"));
+            });
 
             services.AddScoped<IKubernetes, Kubernetes>(provider => {
                 var factory = provider.GetRequiredService<ILoggerFactory>();
@@ -94,6 +99,11 @@ namespace MSSqlOperator
             services.AddScoped<DeploymentScriptOperator>();
 
             return services.BuildServiceProvider();
+        }
+
+        private static IConfiguration BuildConfiguration()
+        {
+            return new ConfigurationBuilder().AddEnvironmentVariables().Build();
         }
     }
 }
