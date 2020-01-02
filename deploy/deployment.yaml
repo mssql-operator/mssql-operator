@@ -18,8 +18,23 @@ spec:
       serviceAccountName: mssql-operator-serviceaccount
       containers:
       - name: mssql-operator
-        image: techpyramid/mssql-operator
+        image: techpyramid/mssql-operator:nightly
         imagePullPolicy: IfNotPresent
+        env:
+        - name: METRICS__REPORTING__INFLUXDB__BASEURI
+          value: http://influx-influxdb:8086
+        - name: METRICS__REPORTING__INFLUXDB__DATABASE
+          value: "metrics"
+        - name: METRICS__REPORTING__INFLUXDB__RETENTIONPOLICY
+          value: "mssql-operator"
+        - name: METRICS__REPORTING__INFLUXDB__CREATEDATABASEIFNOTEXISTS
+          value: "true"
+        - name: METRICS__REPORTING__INFLUXDB__RETENTIONPOLICYTIMESPAN
+          value: "00:15:00"
+        - name: METRICS__REPORTING__INFLUXDB__USERNAME
+          value: admin
+        - name: METRICS__REPORTING__INFLUXDB__PASSWORD
+          value: influxpass
         resources:
           requests:
             memory: 128Mi

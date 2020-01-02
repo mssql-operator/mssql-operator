@@ -61,8 +61,11 @@ namespace MSSqlOperator.Utilities
             var retentionTime = configuration.GetValue<TimeSpan?>("RetentionPolicyTimespan");
             if (retentionTime != null)
             {
-                options.InfluxDb.CreateDatabaseRetentionPolicy.Duration = retentionTime;
-                options.InfluxDb.CreateDatabaseRetentionPolicy.Name = options.InfluxDb.RetentionPolicy;
+                options.InfluxDb.CreateDatabaseRetentionPolicy = new RetentionPolicyOptions
+                {
+                    Duration = retentionTime,
+                    Name = options.InfluxDb.RetentionPolicy
+                };
             }
 
             return options;
