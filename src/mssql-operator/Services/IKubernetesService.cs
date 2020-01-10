@@ -16,6 +16,6 @@ namespace MSSqlOperator.Services
         V1ServiceList GetService(string namespaceProperty, V1LabelSelector selector);
         void UpdateDatabaseStatus(DatabaseResource resource, string reason, string message, System.DateTimeOffset date);
         void UpdateDeploymentScriptStatus(DeploymentScriptResource resource, string reason, string message, DateTimeOffset date);
-        void UpdateStatus<TSpec, TStatus>(CustomResource<TSpec, TStatus> resource);
+        void UpdateStatus<TSpec, TStatus>(CustomResource<TSpec, TStatus> resource) where TStatus: CustomResourceStatus;
     }
 }

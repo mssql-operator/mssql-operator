@@ -1,8 +1,9 @@
 ﻿using System;
+using OperatorSharp.CustomResources;
 
 namespace MSSqlOperator.DeploymentScripts
 {
-    public class DeploymentScriptStatus
+    public class DeploymentScriptStatus : CustomResourceStatus
     {
         public DateTimeOffset LastUpdate { get; set; }
         public string Reason { get; set; }

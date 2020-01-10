@@ -8,6 +8,7 @@ using MSSqlOperator.Services;
 using System.Collections.Generic;
 using Microsoft.Rest;
 using MSSqlOperator.DatabaseServers;
+using OperatorSharp.Filters;
 
 namespace MSSqlOperator.Databases
 {
@@ -30,6 +31,8 @@ namespace MSSqlOperator.Databases
             this.sqlService = sqlService;
             this.eventRecorder = eventRecorder;
             this.rehydrator = rehydrator;
+
+            Filters.Add(new IgnoreStatusUpdatesOperatorFilter<DatabaseResource, DatabaseStatus>());
         }
 
         public override void HandleException(Exception ex)

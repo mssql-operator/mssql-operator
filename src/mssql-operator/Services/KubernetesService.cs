@@ -115,8 +115,9 @@ namespace MSSqlOperator.Services
             UpdateStatus(resource);
         }
 
-        public void UpdateStatus<TSpec, TStatus>(CustomResource<TSpec, TStatus> resource)
+        public void UpdateStatus<TSpec, TStatus>(CustomResource<TSpec, TStatus> resource) where TStatus : CustomResourceStatus
         {
+            resource.Status.ObservedGeneration = resource.Metadata.Generation;
             client.ReplaceNamespacedCustomObjectStatus(resource, resource.ApiVersionMetadata.Group, resource.ApiVersionMetadata.Version, resource.Metadata.NamespaceProperty, resource.PluralName, resource.Metadata.Name);
         }
 

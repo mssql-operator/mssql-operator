@@ -1,6 +1,8 @@
-﻿namespace MSSqlOperator.DatabaseServers
+﻿using OperatorSharp.CustomResources;
+
+namespace MSSqlOperator.DatabaseServers
 {
-    public class DatabaseServerStatus
+    public class DatabaseServerStatus : CustomResourceStatus
     {
     }
 }

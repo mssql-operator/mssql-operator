@@ -10,6 +10,7 @@ using Microsoft.Rest;
 using MSSqlOperator.DatabaseServers;
 using MSSqlOperator.Services;
 using OperatorSharp;
+using OperatorSharp.Filters;
 
 namespace MSSqlOperator.DeploymentScripts
 {
@@ -33,9 +34,11 @@ namespace MSSqlOperator.DeploymentScripts
             this.sqlService = sqlService;
             this.eventRecorder = eventRecorder;
             Metrics = metrics;
+
+            Filters.Add(new IgnoreStatusUpdatesOperatorFilter<DeploymentScriptResource, DeploymentScriptStatus>());
         }
 
-        public static CounterOptions options = new CounterOptions() { Name = "Executions" };
+        public static CounterOptions options = new CounterOptions() { Name = "Script Executions" };
 
         public override void HandleException(Exception ex)
         {
