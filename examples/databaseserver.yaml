@@ -6,7 +6,7 @@ metadata:
   labels:
     database-server: dev
 spec:
-  # serviceUrl: techpyramid-dev-sql.default.svc.cluster.local:1433
+  #serviceUrl: localhost,1433
   serviceSelector:
     matchLabels:
       tier: db
@@ -15,3 +15,21 @@ spec:
     secretKeyRef:
       name: mssql
       key: SA_PASSWORD
+---
+apiVersion: mssql.techpyramid.ws/v1alpha1
+kind: Credentials
+metadata:
+  name: techpyramid-azure-backup-credentials
+  namespace: default
+  labels:
+    database-server: dev
+spec:
+  credentialName: "https://techpyramidsqlbak.blob.core.windows.net/backups"
+  identity: "SHARED ACCESS SIGNATURE"
+  secret:
+    secretKeyRef:
+      name: azure
+      key: sas_key
+  databaseSelector:
+    matchLabels:
+      database-server: dev

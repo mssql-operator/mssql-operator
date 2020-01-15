@@ -10,7 +10,6 @@ spec:
     shortNames:
     - db
     singular: database
-  preserveUnknownFields: true
   scope: Namespaced
   subresources:
     status: {}

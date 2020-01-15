@@ -17,6 +17,8 @@ using MSSqlOperator.Databases;
 using App.Metrics.Formatters.Json;
 using Microsoft.Extensions.Configuration;
 using MSSqlOperator.Utilities;
+using MSSqlOperator.Secrets;
+using MSSqlOperator.Credentials;
 
 namespace MSSqlOperator
 {
@@ -35,7 +37,8 @@ namespace MSSqlOperator
                 var operators = new List<IOperatorScope>
                 {
                     new OperatorScope<DatabaseOperator>(services),
-                    new OperatorScope<DeploymentScriptOperator>(services)
+                    new OperatorScope<DeploymentScriptOperator>(services),
+                    new OperatorScope<CredentialsOperator>(services)
                     // new OperatorScope<DatabaseServerOperator>(services)
                 };
 
@@ -91,12 +94,12 @@ namespace MSSqlOperator
 
             services.AddScoped<IKubernetesService, KubernetesService>();
             services.AddScoped<ISqlManagementService, SqlManagementService>();
-            services.AddScoped<IEventRecorder<DatabaseResource>, EventRecorder<DatabaseResource>>();
-            services.AddScoped<IEventRecorder<DeploymentScriptResource>, EventRecorder<DeploymentScriptResource>>();
+            services.AddScoped<SecretSourceRehydrator>();
             services.AddScoped<DatabaseServerRehydrator>();
-            services.AddScoped<DatabaseOperator>();
-            services.AddScoped<DatabaseServerOperator>();
-            services.AddScoped<DeploymentScriptOperator>();
+            services.AddOperator<DatabaseResource, DatabaseOperator>();
+            services.AddOperator<DatabaseServerResource, DatabaseServerOperator>();
+            services.AddOperator<DeploymentScriptResource, DeploymentScriptOperator>();
+            services.AddOperator<CredentialsResource, CredentialsOperator>();
 
             return services.BuildServiceProvider();
         }

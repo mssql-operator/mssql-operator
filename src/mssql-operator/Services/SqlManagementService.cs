@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Microsoft.SqlServer.Management.Common;
 using Microsoft.SqlServer.Management.Smo;
+using MSSqlOperator.Credentials;
 using MSSqlOperator.Databases;
 using MSSqlOperator.DatabaseServers;
 
@@ -32,6 +33,41 @@ namespace MSSqlOperator.Services
             var serverConn = CreateServerConnection(server);
 
             return serverConn.Databases[databaseName] != null;
+        }
+
+        public bool DoesCredentialExist(DatabaseServer server, string credentialName)
+        {
+            var serverConn = CreateServerConnection(server);
+
+            return serverConn.Credentials[credentialName] != null;
+        }
+
+        public void UpdateCredential(DatabaseServer server, CredentialsSpec credential)
+        {
+            var serverConn = CreateServerConnection(server);
+
+            var originalCredential = serverConn.Credentials[credential.CredentialName];
+            if (originalCredential == null) throw new ArgumentNullException("CredentialName");
+
+            originalCredential.Alter(credential.Identity, credential.Secret.Value);
+        }
+
+        public void CreateCredential(DatabaseServer server, CredentialsSpec credentials)
+        {
+            var serverConn = CreateServerConnection(server);
+
+            var newCredential = new Credential(serverConn, credentials.CredentialName);
+
+            newCredential.Create(credentials.Identity, credentials.Secret.Value);
+        }
+
+        public void DeleteCredential(DatabaseServer server, CredentialsSpec credentials)
+        {
+            var serverConn = CreateServerConnection(server);
+            var oldCredential = serverConn.Credentials[credentials.CredentialName];
+
+            if (oldCredential == null) return;
+            oldCredential.DropIfExists();
         }
 
         public void RestoreDatabase(DatabaseServer serverResource, DatabaseResource resource)

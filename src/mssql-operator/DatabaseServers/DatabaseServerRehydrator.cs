@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Text;
 using Microsoft.Extensions.Logging;
+using MSSqlOperator.Secrets;
 using MSSqlOperator.Services;
 
 namespace MSSqlOperator.DatabaseServers
@@ -9,11 +10,13 @@ namespace MSSqlOperator.DatabaseServers
     {
         private readonly IKubernetesService service;
         private readonly ILogger<DatabaseServerRehydrator> logger;
+        private readonly SecretSourceRehydrator secretRehydrator;
 
-        public DatabaseServerRehydrator(IKubernetesService service, ILogger<DatabaseServerRehydrator> logger)
+        public DatabaseServerRehydrator(IKubernetesService service, ILogger<DatabaseServerRehydrator> logger, SecretSourceRehydrator secretRehydrator)
         {
             this.service = service;
             this.logger = logger;
+            this.secretRehydrator = secretRehydrator;
         }
 
         public DatabaseServerResource Rehydrate(DatabaseServerResource server)
@@ -31,27 +34,10 @@ namespace MSSqlOperator.DatabaseServers
 
             if (string.IsNullOrEmpty(server?.Spec.AdminPasswordSecret.Value) && server?.Spec.AdminPasswordSecret.SecretKeyRef != null)
             {
-                server.Spec.AdminPasswordSecret = Rehydrate(server.Metadata.NamespaceProperty, server.Spec.AdminPasswordSecret);
+                server.Spec.AdminPasswordSecret = secretRehydrator.Rehydrate(server.Metadata.NamespaceProperty, server.Spec.AdminPasswordSecret);
             }
 
             return server;
-        }
-
-        public SecretSource Rehydrate(string namespaceProperty, SecretSource secretSource)
-        {
-            var keyRef = secretSource.SecretKeyRef;
-            var secret = service.GetSecret(namespaceProperty, keyRef.Name);
-            if (secret?.Data.ContainsKey(keyRef.Key) ?? false)
-            {
-                var data = secret.Data[keyRef.Key];
-                secretSource.Value = Encoding.Default.GetString(data);
-            }
-            else
-            {
-                logger.LogWarning("Secret named {secret}:{key} could be found to satisfy adminPasswordSecret", keyRef.Name, keyRef.Key);
-            }
-
-            return secretSource;
         }
     }
 }

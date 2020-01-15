@@ -10,7 +10,6 @@ spec:
     shortNames:
     - script
     singular: deploymentscript
-  preserveUnknownFields: true
   scope: Namespaced
   subresources:
     status: {}
