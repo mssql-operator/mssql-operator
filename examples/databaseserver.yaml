@@ -17,7 +17,7 @@ spec:
       key: SA_PASSWORD
 ---
 apiVersion: mssql.techpyramid.ws/v1alpha1
-kind: Credentials
+kind: Credential
 metadata:
   name: techpyramid-azure-backup-credentials
   namespace: default

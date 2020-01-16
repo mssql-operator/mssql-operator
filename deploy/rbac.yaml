@@ -13,6 +13,8 @@ rules:
   resources:
   - databases
   - databaseservers
+  - deploymentscripts
+  - credentials
   verbs:
   - get
   - list
