@@ -24,8 +24,8 @@ metadata:
   labels:
     database-server: dev
 spec:
-  credentialName: "https://techpyramidsqlbak.blob.core.windows.net/backups"
-  identity: "SHARED ACCESS SIGNATURE"
+  credentialName: "backups"
+  identity: "techpyramidsqlbak"
   secret:
     secretKeyRef:
       name: azure

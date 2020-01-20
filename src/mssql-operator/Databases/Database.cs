@@ -18,7 +18,7 @@ namespace MSSqlOperator.Databases
 
     public class DatabaseSpec 
     {
-        public V1LabelSelector DatabaseSelector { get; set; }
+        public V1LabelSelector DatabaseServerSelector { get; set; }
         public string Collation { get; set; }
         public List<DatabaseFile> LogFiles { get; set; }
         public List<DatabaseFile> BackupFiles { get; set; }

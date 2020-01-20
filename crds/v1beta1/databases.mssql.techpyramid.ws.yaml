@@ -31,7 +31,7 @@ spec:
             type: object
           spec:
             properties:
-              DatabaseSelector:
+              DatabaseServerSelector:
                 properties:
                   matchExpressions:
                     items:

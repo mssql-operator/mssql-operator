@@ -30,9 +30,6 @@ spec:
 ## Database
 The Database API object defines the parameters to be used to create the database
 
-## Credentials
-The Credentials object is used only for a very small corner case when we are restoring the database from a backup stored in Azure Storage. This creates the necessary SQL object to authenticate to Azure Storage to retrieve the backup file from the blob.
-
 ## DeploymentScript
 The DeploymentScript object allows the developer to specify a script to be run against the database sometime after creation. This can include Data Definition Language (DDL) statements and Data Manipulation Language (DML) statements to initialize the newly-created database to some desired state. Because the script is stored in the Kubernetes cluster's etcd data store, this is likely best used for simple state setups. More complex state manipulations will benefit more greatly from the restore functionality provided by the Database object.
 

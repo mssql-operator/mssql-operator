@@ -58,7 +58,7 @@ namespace MSSqlOperator.DeploymentScripts
                     {
                         if (database.Status.Reason == "Available")
                         {
-                            var servers = k8sService.GetDatabaseServer(item.Metadata.NamespaceProperty, database.Spec.DatabaseSelector);
+                            var servers = k8sService.GetDatabaseServer(item.Metadata.NamespaceProperty, database.Spec.DatabaseServerSelector);
                             foreach (var server in servers.Items)
                             {
                                 rehydrator.Rehydrate(server);

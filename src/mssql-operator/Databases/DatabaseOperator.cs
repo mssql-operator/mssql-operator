@@ -44,7 +44,7 @@ namespace MSSqlOperator.Databases
         {
             Logger.LogDebug("Recieved new Database object (v {ResourceVersion})", item.Metadata.ResourceVersion);
             try {
-                var servers = GetServerResources(item.Metadata.NamespaceProperty, item.Spec.DatabaseSelector);
+                var servers = GetServerResources(item.Metadata.NamespaceProperty, item.Spec.DatabaseServerSelector);
                 foreach (var server in servers) {
                     if (eventType == WatchEventType.Added) 
                     {

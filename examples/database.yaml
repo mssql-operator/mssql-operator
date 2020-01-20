@@ -6,7 +6,7 @@ metadata:
   labels:
     database-server: dev
 spec:
-  databaseSelector:
+  databaseServerSelector:
     matchLabels:
       database-server: dev
   datafiles:
@@ -25,7 +25,7 @@ metadata:
   labels:
     database: accounts
 spec:
-  databaseSelector:
+  databaseServerSelector:
     matchLabels:
       database-server: dev
   datafiles:
