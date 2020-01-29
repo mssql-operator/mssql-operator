@@ -77,7 +77,7 @@ namespace MSSqlOperator.Services
             var restore = new Restore();
             var backupFile = resource.Spec.BackupFiles.FirstOrDefault();
             restore.Devices.AddDevice(backupFile.Path, DeviceType.File);
-            restore.Database = resource.Metadata.Name;
+            restore.Database = resource.Spec.DatabaseName;
             restore.Action = RestoreActionType.Database;
             restore.ReplaceDatabase = true;
 
@@ -97,7 +97,7 @@ namespace MSSqlOperator.Services
             logger.LogDebug("Processing create for {database}", item.Metadata.Name);
             var serverConn = CreateServerConnection(serverResource);
 
-            var database = new Database(serverConn, item.Metadata.Name) { Collation = ChooseCollation(item) };
+            var database = new Database(serverConn, item.Spec.DatabaseName) { Collation = ChooseCollation(item) };
             foreach (var groupEntry in item.Spec.DataFiles)
             {
                 var fileGroupName = groupEntry.Key;

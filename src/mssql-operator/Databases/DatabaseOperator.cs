@@ -46,11 +46,11 @@ namespace MSSqlOperator.Databases
             try {
                 var servers = GetServerResources(item.Metadata.NamespaceProperty, item.Spec.DatabaseServerSelector);
                 foreach (var server in servers) {
-                    if (eventType == WatchEventType.Added) 
+                    if (eventType == WatchEventType.Added || eventType == WatchEventType.Modified) 
                     {
-                        if (sqlService.DoesDatabaseExist(server.Spec, item.Metadata.Name)) 
+                        if (sqlService.DoesDatabaseExist(server.Spec, item.Spec.DatabaseName)) 
                         {
-                            Logger.LogInformation("Database {database} already exists on server {server}", item.Metadata.Name, server.Metadata.Name);
+                            Logger.LogInformation("Database {database} already exists on server {server}", item.Spec.DatabaseName, server.Metadata.Name);
                             k8sService.UpdateDatabaseStatus(item, "Available", "Database already exists", DateTimeOffset.Now);
                             continue;
                         } 
@@ -72,7 +72,7 @@ namespace MSSqlOperator.Databases
                     {
                         if (item.Spec.GCStrategy == GarbageCollectionStrategy.Delete) 
                         {
-                            sqlService.DeleteDatabase(server.Spec, item.Metadata.Name);
+                            sqlService.DeleteDatabase(server.Spec, item.Spec.DatabaseName);
                         }
                     }
                 }

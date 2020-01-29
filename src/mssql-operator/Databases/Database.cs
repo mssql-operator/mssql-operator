@@ -24,5 +24,6 @@ namespace MSSqlOperator.Databases
         public List<DatabaseFile> BackupFiles { get; set; }
         public Dictionary<string, List<DatabaseFile>> DataFiles { get; set; }
         public GarbageCollectionStrategy GCStrategy { get; set; }
+        public string DatabaseName { get; set; }
     }
 }
