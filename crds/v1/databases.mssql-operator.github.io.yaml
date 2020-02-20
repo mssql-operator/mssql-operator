@@ -1,15 +1,15 @@
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  name: databaseservers.mssql.techpyramid.ws
+  name: databases.mssql-operator.github.io
 spec:
-  group: mssql.techpyramid.ws
+  group: mssql-operator.github.io
   names:
-    kind: DatabaseServer
-    plural: databaseservers
+    kind: Database
+    plural: databases
     shortNames:
-    - dbms
-    singular: databaseserver
+    - db
+    singular: database
   preserveUnknownFields: true
   scope: Namespaced
   versions:
@@ -19,12 +19,18 @@ spec:
         properties:
           status:
             properties:
+              LastUpdate:
+                type: string
+              Reason:
+                type: string
+              Message:
+                type: string
               observedGeneration:
                 type: integer
             type: object
           spec:
             properties:
-              ServiceSelector:
+              DatabaseServerSelector:
                 properties:
                   matchExpressions:
                     items:
@@ -42,23 +48,35 @@ spec:
                   matchLabels:
                     type: object
                 type: object
-              AdminUserName:
+              Collation:
                 type: string
-              AdminPasswordSecret:
-                properties:
-                  Value:
-                    type: string
-                  SecretKeyRef:
-                    properties:
-                      key:
-                        type: string
-                      name:
-                        type: string
-                      optional:
-                        type: boolean
-                    type: object
+              LogFiles:
+                items:
+                - properties:
+                    Name:
+                      type: string
+                    Path:
+                      type: string
+                    IsPrimaryFile:
+                      type: boolean
+                  type: object
+                type: array
+              BackupFiles:
+                items:
+                - properties:
+                    Name:
+                      type: string
+                    Path:
+                      type: string
+                    IsPrimaryFile:
+                      type: boolean
+                  type: object
+                type: array
+              DataFiles:
                 type: object
-              ServiceUrl:
+              GCStrategy:
+                type: integer
+              DatabaseName:
                 type: string
             type: object
         type: object

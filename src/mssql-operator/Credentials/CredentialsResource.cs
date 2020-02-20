@@ -6,7 +6,7 @@ using OperatorSharp.CustomResources.Metadata;
 
 namespace MSSqlOperator.Credentials
 {
-    [ApiVersion("mssql.techpyramid.ws/v1alpha1")]
+    [ApiVersion("mssql-operator.github.io/v1alpha1")]
     [Kind("Credential")]
     [PluralName("Credentials")]
     [ShortName("creds")]

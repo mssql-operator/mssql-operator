@@ -1,15 +1,15 @@
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  name: databases.mssql.techpyramid.ws
+  name: databaseservers.mssql-operator.github.io
 spec:
-  group: mssql.techpyramid.ws
+  group: mssql-operator.github.io
   names:
-    kind: Database
-    plural: databases
+    kind: DatabaseServer
+    plural: databaseservers
     shortNames:
-    - db
-    singular: database
+    - dbms
+    singular: databaseserver
   preserveUnknownFields: true
   scope: Namespaced
   versions:
@@ -19,18 +19,12 @@ spec:
         properties:
           status:
             properties:
-              LastUpdate:
-                type: string
-              Reason:
-                type: string
-              Message:
-                type: string
               observedGeneration:
                 type: integer
             type: object
           spec:
             properties:
-              DatabaseServerSelector:
+              ServiceSelector:
                 properties:
                   matchExpressions:
                     items:
@@ -48,34 +42,24 @@ spec:
                   matchLabels:
                     type: object
                 type: object
-              Collation:
+              AdminUserName:
                 type: string
-              LogFiles:
-                items:
-                - properties:
-                    Name:
-                      type: string
-                    Path:
-                      type: string
-                    IsPrimaryFile:
-                      type: boolean
-                  type: object
-                type: array
-              BackupFiles:
-                items:
-                - properties:
-                    Name:
-                      type: string
-                    Path:
-                      type: string
-                    IsPrimaryFile:
-                      type: boolean
-                  type: object
-                type: array
-              DataFiles:
+              AdminPasswordSecret:
+                properties:
+                  Value:
+                    type: string
+                  SecretKeyRef:
+                    properties:
+                      key:
+                        type: string
+                      name:
+                        type: string
+                      optional:
+                        type: boolean
+                    type: object
                 type: object
-              GCStrategy:
-                type: integer
+              ServiceUrl:
+                type: string
             type: object
         type: object
     served: true

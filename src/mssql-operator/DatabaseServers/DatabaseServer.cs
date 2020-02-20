@@ -5,7 +5,7 @@ using OperatorSharp.CustomResources.Metadata;
 
 namespace MSSqlOperator.DatabaseServers
 {
-    [ApiVersion("mssql.techpyramid.ws/v1alpha1")]
+    [ApiVersion("mssql-operator.github.io/v1alpha1")]
     [Kind("DatabaseServer")]
     [PluralName("DatabaseServers")]
     [ShortName("dbms")]

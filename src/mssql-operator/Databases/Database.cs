@@ -7,7 +7,7 @@ using OperatorSharp.CustomResources.Metadata;
 
 namespace MSSqlOperator.Databases
 {
-    [ApiVersion("mssql.techpyramid.ws/v1alpha1")]
+    [ApiVersion("mssql-operator.github.io/v1alpha1")]
     [Kind("Database")]
     [PluralName("databases")]
     [ResourceScope(ResourceScopes.Namespaced)]
