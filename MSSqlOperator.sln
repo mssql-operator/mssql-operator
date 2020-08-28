@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1B933F48-084
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mssql-operator", "src\mssql-operator\mssql-operator.csproj", "{0D451DAF-64FF-4C87-82F7-9BF16358E3E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSSqlOperator.Kapitan", "MSSqlOperator.Kapitan\MSSqlOperator.Kapitan.csproj", "{E0D06186-27B5-4F0D-B71B-6B2C828ED299}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSSqlOperator.Kapitan", "src\MSSqlOperator.Kapitan\MSSqlOperator.Kapitan.csproj", "{E0D06186-27B5-4F0D-B71B-6B2C828ED299}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
