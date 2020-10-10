@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Kapitan.Kubernetes.Core.V1;
+using Kanyon.Kubernetes.Core.V1;
 
 namespace MSSqlOperator.Kapitan.V1Alpha1
 {
