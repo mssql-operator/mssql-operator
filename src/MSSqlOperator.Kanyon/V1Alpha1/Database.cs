@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using Kanyon.Core;
-using MSSqlOperator.Kapitan.V1Alpha1;
 using Newtonsoft.Json;
 
 namespace MSSqlOperator.Kanyon.V1Alpha1
