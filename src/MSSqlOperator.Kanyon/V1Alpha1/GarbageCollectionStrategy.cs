@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Kanyon.Core;
 
-namespace MSSqlOperator.Kapitan.V1Alpha1
+namespace MSSqlOperator.Kanyon.V1Alpha1
 {
     public class GarbageCollectionStrategy : WrappedString
     {

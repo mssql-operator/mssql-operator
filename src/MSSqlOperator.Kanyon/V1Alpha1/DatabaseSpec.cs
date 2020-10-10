@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Kanyon.Kubernetes.Core.V1;
+using MSSqlOperator.Kanyon.V1Alpha1;
 
 namespace MSSqlOperator.Kapitan.V1Alpha1
 {

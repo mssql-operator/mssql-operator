@@ -7,13 +7,13 @@ using Kanyon.Kubernetes.Apps.V1;
 using Kanyon.Kubernetes.Core.V1;
 using Kanyon.Kubernetes.Rbac.V1;
 
-namespace MSSqlOperator.Kapitan
+namespace MSSqlOperator.Kanyon
 {
     public class MSSqlOperatorManifest : Manifest
     {
         public MSSqlOperatorManifest()
         {
-            this.Add(new CustomResourceDefinition()
+            Add(new CustomResourceDefinition()
             {
                 metadata = new ObjectMeta
                 {
@@ -47,7 +47,7 @@ namespace MSSqlOperator.Kapitan
                 }
             });
 
-            this.Add(new CustomResourceDefinition()
+            Add(new CustomResourceDefinition()
             {
                 metadata = new ObjectMeta
                 {
@@ -81,7 +81,7 @@ namespace MSSqlOperator.Kapitan
                 }
             });
 
-            this.Add(new CustomResourceDefinition()
+            Add(new CustomResourceDefinition()
             {
                 metadata = new ObjectMeta
                 {
@@ -115,7 +115,7 @@ namespace MSSqlOperator.Kapitan
                 }
             });
 
-            this.Add(new Namespace
+            Add(new Namespace
             {
                 metadata = new ObjectMeta
                 {
@@ -123,7 +123,7 @@ namespace MSSqlOperator.Kapitan
                 }
             });
 
-            this.Add(new ServiceAccount
+            Add(new ServiceAccount
             {
                 metadata = new ObjectMeta
                 {
@@ -132,7 +132,7 @@ namespace MSSqlOperator.Kapitan
                 }
             });
 
-            this.Add(new ClusterRole
+            Add(new ClusterRole
             {
                 metadata = new ObjectMeta
                 {
@@ -155,7 +155,7 @@ namespace MSSqlOperator.Kapitan
                 }
             });
 
-            this.Add(new ClusterRoleBinding
+            Add(new ClusterRoleBinding
             {
                 metadata = new ObjectMeta
                 {
@@ -180,7 +180,7 @@ namespace MSSqlOperator.Kapitan
 
             var labels = new { app = "mssql-operator" };
 
-            this.Add(Deployment);
+            Add(Deployment);
         }
 
         public Deployment Deployment { get; set; } = new Deployment
