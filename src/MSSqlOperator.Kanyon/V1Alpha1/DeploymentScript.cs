@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Kapitan.Core;
+using Kanyon.Core;
+using Newtonsoft.Json;
 
 namespace MSSqlOperator.Kapitan.V1Alpha1
 {
     public class DeploymentScript : IManifestObject
     {
-        public string apiVersion => "mssql-operator.github.io/v1alpha1";
-        public string kind => "DeploymentScript";
+        [JsonProperty("apiVersion")]
+        public string ApiVersion => "mssql-operator.github.io/v1alpha1";
+        [JsonProperty("kind")]
+        public string Kind => "DeploymentScript";
 
         public DeploymentScriptSpec spec { get; set; }
     }
