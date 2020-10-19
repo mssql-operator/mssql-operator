@@ -31,17 +31,17 @@ namespace MSSqlOperator.Kanyon
                     },
                     preserveUnknownFields = true,
                     scope = "Namespaced",
+                    subresources = new CustomResourceSubresources
+                    {
+                        status = new CustomResourceSubresourceStatus()
+                    },
                     versions = new[]
                     {
                         new CustomResourceDefinitionVersion
                         {
                             name = "v1alpha1",
                             served = true,
-                            storage = true,
-                            subresources = new CustomResourceSubresources
-                            {
-                                status = new CustomResourceSubresourceStatus()
-                            }
+                            storage = true
                         }
                     }
                 }
@@ -65,17 +65,17 @@ namespace MSSqlOperator.Kanyon
                     },
                     preserveUnknownFields = true,
                     scope = "Namespaced",
+                    subresources = new CustomResourceSubresources
+                    {
+                        status = new CustomResourceSubresourceStatus()
+                    },
                     versions = new[]
                     {
                         new CustomResourceDefinitionVersion
                         {
                             name = "v1alpha1",
                             served = true,
-                            storage = true,
-                            subresources = new CustomResourceSubresources
-                            {
-                                status = new CustomResourceSubresourceStatus()
-                            }
+                            storage = true
                         }
                     }
                 }
@@ -99,17 +99,17 @@ namespace MSSqlOperator.Kanyon
                     },
                     preserveUnknownFields = true,
                     scope = "Namespaced",
+                    subresources = new CustomResourceSubresources
+                    {
+                        status = new CustomResourceSubresourceStatus()
+                    },
                     versions = new[]
                     {
                         new CustomResourceDefinitionVersion
                         {
                             name = "v1alpha1",
                             served = true,
-                            storage = true,
-                            subresources = new CustomResourceSubresources
-                            {
-                                status = new CustomResourceSubresourceStatus()
-                            }
+                            storage = true
                         }
                     }
                 }
