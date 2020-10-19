@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Kanyon.Core;
-using Kanyon.Kubernetes.Apiextensions.V1;
+using Kanyon.Kubernetes.Apiextensions.V1beta1;
 using Kanyon.Kubernetes.Apps.V1;
 using Kanyon.Kubernetes.Core.V1;
 using Kanyon.Kubernetes.Rbac.V1;
