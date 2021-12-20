@@ -22,7 +22,6 @@ namespace MSSqlOperator.Kanyon {
                         shortNames = new[] { "db" },
                         singular = "database"
                     },
-                    preserveUnknownFields = true,
                     scope = "Namespaced",
                     versions = new [] {
                         new CustomResourceDefinitionVersion {
@@ -42,6 +41,7 @@ namespace MSSqlOperator.Kanyon {
                                         { "dataFiles", new OpenApiSchema {
                                             Type = "object",
                                             AdditionalProperties = new OpenApiSchema {
+                                                Type = "array",
                                                 Items = new OpenApiSchema {
                                                     Type = "object",
                                                     Properties = new Dictionary<string, OpenApiSchema> {
@@ -56,8 +56,8 @@ namespace MSSqlOperator.Kanyon {
                                             { 
                                                 Type = "object",
                                                 Properties = new Dictionary<string, OpenApiSchema> {
-                                                    { "matchLabels", new OpenApiSchema { AdditionalProperties = new OpenApiSchema { Type = "string" } } },
-                                                    { "matchExpressions", new OpenApiSchema { AdditionalProperties = new OpenApiSchema { Type = "string" } } }
+                                                    { "matchLabels", new OpenApiSchema { Type = "object", AdditionalProperties = new OpenApiSchema { Type = "string" } } },
+                                                    { "matchExpressions", new OpenApiSchema { Type = "object", AdditionalProperties = new OpenApiSchema { Type = "string" } } }
                                                 }
                                             } 
                                         },
@@ -108,7 +108,6 @@ namespace MSSqlOperator.Kanyon {
                         shortNames = new[] { "dbms" },
                         singular = "databaseserver"
                     },
-                    preserveUnknownFields = true,
                     scope = "Namespaced",
                     versions = new [] {
                         new CustomResourceDefinitionVersion {
@@ -128,8 +127,8 @@ namespace MSSqlOperator.Kanyon {
                                             { 
                                                 Type = "object",
                                                 Properties = new Dictionary<string, OpenApiSchema> {
-                                                    { "matchLabels", new OpenApiSchema { AdditionalProperties = new OpenApiSchema { Type = "string" } } },
-                                                    { "matchExpressions", new OpenApiSchema { AdditionalProperties = new OpenApiSchema { Type = "string" } } }
+                                                    { "matchLabels", new OpenApiSchema { Type = "object", AdditionalProperties = new OpenApiSchema { Type = "string" } } },
+                                                    { "matchExpressions", new OpenApiSchema { Type = "object", AdditionalProperties = new OpenApiSchema { Type = "string" } } }
                                                 }
                                             } 
                                         },
@@ -168,7 +167,6 @@ namespace MSSqlOperator.Kanyon {
                         shortNames = new[] { "script" },
                         singular = "deploymentscript"
                     },
-                    preserveUnknownFields = true,
                     scope = "Namespaced",
                     versions = new [] {
                         new CustomResourceDefinitionVersion {
@@ -187,8 +185,8 @@ namespace MSSqlOperator.Kanyon {
                                             { 
                                                 Type = "object",
                                                 Properties = new Dictionary<string, OpenApiSchema> {
-                                                    { "matchLabels", new OpenApiSchema { AdditionalProperties = new OpenApiSchema { Type = "string" } } },
-                                                    { "matchExpressions", new OpenApiSchema { AdditionalProperties = new OpenApiSchema { Type = "string" } } }
+                                                    { "matchLabels", new OpenApiSchema { Type = "object", AdditionalProperties = new OpenApiSchema { Type = "string" } } },
+                                                    { "matchExpressions", new OpenApiSchema { Type = "object", AdditionalProperties = new OpenApiSchema { Type = "string" } } }
                                                 }
                                             } 
                                         }                        
