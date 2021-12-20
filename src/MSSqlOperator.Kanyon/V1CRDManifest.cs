@@ -1,0 +1,204 @@
+using System;
+using System.Collections.Generic;
+using Kanyon.Core;
+using Kanyon.Kubernetes.Apiextensions.V1;
+using Kanyon.Kubernetes.Core.V1;
+using Microsoft.OpenApi.Models;
+
+namespace MSSqlOperator.Kanyon {
+    public class V1CRDManifest : Manifest {
+        public V1CRDManifest()
+        {
+            Add(new CustomResourceDefinition {
+                metadata = new ObjectMeta {
+                    name = "databases.mssql-operator.github.io"
+                },
+                spec = new CustomResourceDefinitionSpec
+                {
+                    group = "mssql-operator.github.io",
+                    names = new CustomResourceDefinitionNames {
+                        kind = "Database",
+                        plural = "databases",
+                        shortNames = new[] { "db" },
+                        singular = "database"
+                    },
+                    preserveUnknownFields = true,
+                    scope = "Namespaced",
+                    versions = new [] {
+                        new CustomResourceDefinitionVersion {
+                            name = "v1alpha1",
+                            served = true,
+                            storage = true,
+                            subresources = new CustomResourceSubresources {
+                                status = new CustomResourceSubresourceStatus { }
+                            },
+                            schema = new CustomResourceValidation {
+                                openAPIV3Schema = new Microsoft.OpenApi.Models.OpenApiSchema {
+                                    Type = "object",
+                                    Properties = new Dictionary<string, OpenApiSchema> {
+                                        { "databaseName", new OpenApiSchema { Type = "string" } },
+                                        { "collation", new OpenApiSchema { Type = "string" } },
+                                        { "gCStrategy", new OpenApiSchema { Type = "string" } },
+                                        { "dataFiles", new OpenApiSchema {
+                                            Type = "object",
+                                            AdditionalProperties = new OpenApiSchema {
+                                                Items = new OpenApiSchema {
+                                                    Type = "object",
+                                                    Properties = new Dictionary<string, OpenApiSchema> {
+                                                        { "name", new OpenApiSchema { Type = "string" }},
+                                                        { "path", new OpenApiSchema { Type = "string" }},
+                                                        { "isPrimaryFile", new OpenApiSchema { Type = "boolean" }},
+                                                    }
+                                                }
+                                            }
+                                        }},
+                                        { "databaseServerSelector", new OpenApiSchema 
+                                            { 
+                                                Type = "object",
+                                                Properties = new Dictionary<string, OpenApiSchema> {
+                                                    { "matchLabels", new OpenApiSchema { AdditionalProperties = new OpenApiSchema { Type = "string" } } },
+                                                    { "matchExpressions", new OpenApiSchema { AdditionalProperties = new OpenApiSchema { Type = "string" } } }
+                                                }
+                                            } 
+                                        },
+                                        { "logFiles", new OpenApiSchema 
+                                            {
+                                                Type = "object",
+                                                Items = new OpenApiSchema {
+                                                    Type = "object",
+                                                    Properties = new Dictionary<string, OpenApiSchema> {
+                                                        { "name", new OpenApiSchema { Type = "string" }},
+                                                        { "path", new OpenApiSchema { Type = "string" }},
+                                                        { "isPrimaryFile", new OpenApiSchema { Type = "boolean" }},
+                                                    }
+                                                }
+                                            } 
+                                        },
+                                        { "backupFiles", new OpenApiSchema 
+                                            {
+                                                Type = "object",
+                                                Items = new OpenApiSchema {
+                                                    Type = "object",
+                                                    Properties = new Dictionary<string, OpenApiSchema> {
+                                                        { "name", new OpenApiSchema { Type = "string" }},
+                                                        { "path", new OpenApiSchema { Type = "string" }},
+                                                        { "isPrimaryFile", new OpenApiSchema { Type = "boolean" }},
+                                                    }
+                                                }
+                                            } 
+                                        },                                        
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            Add(new CustomResourceDefinition {
+                metadata = new ObjectMeta {
+                    name = "databaseservers.mssql-operator.github.io"
+                },
+                spec = new CustomResourceDefinitionSpec
+                {
+                    group = "mssql-operator.github.io",
+                    names = new CustomResourceDefinitionNames {
+                        kind = "DatabaseServer",
+                        plural = "databaseservers",
+                        shortNames = new[] { "dbms" },
+                        singular = "databaseserver"
+                    },
+                    preserveUnknownFields = true,
+                    scope = "Namespaced",
+                    versions = new [] {
+                        new CustomResourceDefinitionVersion {
+                            name = "v1alpha1",
+                            served = true,
+                            storage = true,
+                            subresources = new CustomResourceSubresources {
+                                status = new CustomResourceSubresourceStatus { }
+                            },
+                            schema = new CustomResourceValidation {
+                                openAPIV3Schema = new Microsoft.OpenApi.Models.OpenApiSchema {
+                                    Type = "object",
+                                    Properties = new Dictionary<string, OpenApiSchema> {
+                                        { "adminUserName", new OpenApiSchema { Type = "string" }},  
+                                        { "serviceUrl", new OpenApiSchema { Type = "string" }}, 
+                                        { "serviceSelector", new OpenApiSchema 
+                                            { 
+                                                Type = "object",
+                                                Properties = new Dictionary<string, OpenApiSchema> {
+                                                    { "matchLabels", new OpenApiSchema { AdditionalProperties = new OpenApiSchema { Type = "string" } } },
+                                                    { "matchExpressions", new OpenApiSchema { AdditionalProperties = new OpenApiSchema { Type = "string" } } }
+                                                }
+                                            } 
+                                        },
+                                        { "adminPasswordSecret", new OpenApiSchema {
+                                            Type = "object",
+                                            Properties = new Dictionary<string, OpenApiSchema> {
+                                                { "value", new OpenApiSchema { Type = "string" }},
+                                                { "secretKeyRef", new OpenApiSchema {
+                                                    Type = "object",
+                                                    Properties = new Dictionary<string, OpenApiSchema> {
+                                                        { "key", new OpenApiSchema { Type = "string" }},
+                                                        { "name", new OpenApiSchema { Type = "string" }},
+                                                        { "optional", new OpenApiSchema { Type = "boolean" }},
+                                                    }
+                                                }}
+                                            }
+                                        }}                           
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            Add(new CustomResourceDefinition {
+                metadata = new ObjectMeta {
+                    name = "deploymentscripts.mssql-operator.github.io"
+                },
+                spec = new CustomResourceDefinitionSpec
+                {
+                    group = "mssql-operator.github.io",
+                    names = new CustomResourceDefinitionNames {
+                        kind = "DeploymentScript",
+                        plural = "deploymentscripts",
+                        shortNames = new[] { "script" },
+                        singular = "deploymentscript"
+                    },
+                    preserveUnknownFields = true,
+                    scope = "Namespaced",
+                    versions = new [] {
+                        new CustomResourceDefinitionVersion {
+                            name = "v1alpha1",
+                            served = true,
+                            storage = true,
+                            subresources = new CustomResourceSubresources {
+                                status = new CustomResourceSubresourceStatus { }
+                            },
+                            schema = new CustomResourceValidation {
+                                openAPIV3Schema = new Microsoft.OpenApi.Models.OpenApiSchema {
+                                    Type = "object",
+                                    Properties = new Dictionary<string, OpenApiSchema> {
+                                        { "script", new OpenApiSchema { Type = "string" }},  
+                                        { "databaseSelector", new OpenApiSchema 
+                                            { 
+                                                Type = "object",
+                                                Properties = new Dictionary<string, OpenApiSchema> {
+                                                    { "matchLabels", new OpenApiSchema { AdditionalProperties = new OpenApiSchema { Type = "string" } } },
+                                                    { "matchExpressions", new OpenApiSchema { AdditionalProperties = new OpenApiSchema { Type = "string" } } }
+                                                }
+                                            } 
+                                        }                        
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+}

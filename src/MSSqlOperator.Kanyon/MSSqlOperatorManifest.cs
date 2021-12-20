@@ -7,114 +7,15 @@ using Kanyon.Kubernetes.Apps.V1;
 using Kanyon.Kubernetes.Core.V1;
 using Kanyon.Kubernetes.Rbac.V1;
 
+[assembly: Kanyon.Core.KanyonManifest(typeof(MSSqlOperator.Kanyon.MSSqlOperatorManifest))]
 namespace MSSqlOperator.Kanyon
 {
     public class MSSqlOperatorManifest : Manifest
     {
         public MSSqlOperatorManifest()
         {
-            Add(new CustomResourceDefinition()
-            {
-                metadata = new ObjectMeta
-                {
-                    name = "databases.mssql-operator.github.io"
-                },
-                spec = new CustomResourceDefinitionSpec()
-                {
-                    group = "mssql-operator.github.io",
-                    names = new CustomResourceDefinitionNames
-                    {
-                        kind = "Database",
-                        plural = "databases",
-                        shortNames = new[] { "db" },
-                        singular = "database",
-                    },
-                    preserveUnknownFields = true,
-                    scope = "Namespaced",
-                    subresources = new CustomResourceSubresources
-                    {
-                        status = new CustomResourceSubresourceStatus()
-                    },
-                    versions = new[]
-                    {
-                        new CustomResourceDefinitionVersion
-                        {
-                            name = "v1alpha1",
-                            served = true,
-                            storage = true
-                        }
-                    }
-                }
-            });
-
-            Add(new CustomResourceDefinition()
-            {
-                metadata = new ObjectMeta
-                {
-                    name = "databaseservers.mssql-operator.github.io"
-                },
-                spec = new CustomResourceDefinitionSpec()
-                {
-                    group = "mssql-operator.github.io",
-                    names = new CustomResourceDefinitionNames
-                    {
-                        kind = "DatabaseServer",
-                        plural = "databaseservers",
-                        shortNames = new[] { "dbms" },
-                        singular = "databaseserver",
-                    },
-                    preserveUnknownFields = true,
-                    scope = "Namespaced",
-                    subresources = new CustomResourceSubresources
-                    {
-                        status = new CustomResourceSubresourceStatus()
-                    },
-                    versions = new[]
-                    {
-                        new CustomResourceDefinitionVersion
-                        {
-                            name = "v1alpha1",
-                            served = true,
-                            storage = true
-                        }
-                    }
-                }
-            });
-
-            Add(new CustomResourceDefinition()
-            {
-                metadata = new ObjectMeta
-                {
-                    name = "deploymentscripts.mssql-operator.github.io"
-                },
-                spec = new CustomResourceDefinitionSpec()
-                {
-                    group = "mssql-operator.github.io",
-                    names = new CustomResourceDefinitionNames
-                    {
-                        kind = "DeploymentScript",
-                        plural = "deploymentscripts",
-                        shortNames = new[] { "script" },
-                        singular = "deploymentscript",
-                    },
-                    preserveUnknownFields = true,
-                    scope = "Namespaced",
-                    subresources = new CustomResourceSubresources
-                    {
-                        status = new CustomResourceSubresourceStatus()
-                    },
-                    versions = new[]
-                    {
-                        new CustomResourceDefinitionVersion
-                        {
-                            name = "v1alpha1",
-                            served = true,
-                            storage = true
-                        }
-                    }
-                }
-            });
-
+            Add(new V1CRDManifest());
+            
             Add(new Namespace
             {
                 metadata = new ObjectMeta
