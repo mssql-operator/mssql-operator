@@ -2,22 +2,20 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>MSSqlOperator</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="App.Metrics.Reporting.Console" Version="3.2.0" />
     <PackageReference Include="App.Metrics.Reporting.InfluxDB" Version="3.2.0" />
-    <PackageReference Include="KubernetesClient" Version="1.6.3" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="3.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
     <PackageReference Include="Microsoft.SqlServer.SqlManagementObjects" Version="150.18178.0" />
-    <PackageReference Include="OperatorSharp" Version="1.0.0-prerelease-20200116224917" />
+    <PackageReference Include="OperatorSharp" Version="2.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.7.0" />
-    <DotNetCliToolReference Include="OperatorSharp.Tools.DotNet" Version="1.0.0-prerelease-20200116224917" />
   </ItemGroup>
 
 </Project>
