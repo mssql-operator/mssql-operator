@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <VersionPrefix>1.2.3</VersionPrefix>
+    <VersionPrefix>2.0.0</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Kanyon.Kubernetes" Version="4.0.0-prerelease-20211219213709" />
+    <PackageReference Include="Kanyon.Kubernetes" Version="4.0.0" />
   </ItemGroup>
 
 </Project>
