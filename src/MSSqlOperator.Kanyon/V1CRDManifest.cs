@@ -9,32 +9,10 @@ namespace MSSqlOperator.Kanyon {
     public class V1CRDManifest : Manifest {
         public V1CRDManifest()
         {
-            Add(new CustomResourceDefinition {
-                metadata = new ObjectMeta {
-                    name = "databases.mssql-operator.github.io"
-                },
-                spec = new CustomResourceDefinitionSpec
-                {
-                    group = "mssql-operator.github.io",
-                    names = new CustomResourceDefinitionNames {
-                        kind = "Database",
-                        plural = "databases",
-                        shortNames = new[] { "db" },
-                        singular = "database"
-                    },
-                    scope = "Namespaced",
-                    versions = new [] {
-                        new CustomResourceDefinitionVersion {
-                            name = "v1alpha1",
-                            served = true,
-                            storage = true,
-                            subresources = new CustomResourceSubresources {
-                                status = new CustomResourceSubresourceStatus { }
-                            },
-                            schema = new CustomResourceValidation {
-                                openAPIV3Schema = new Microsoft.OpenApi.Models.OpenApiSchema {
-                                    Type = "object",
-                                    Properties = new Dictionary<string, OpenApiSchema> {
+            var databaseSpec = new Microsoft.OpenApi.Models.OpenApiSchema
+            {
+                Type = "object",
+                Properties = new Dictionary<string, OpenApiSchema> {
                                         { "databaseName", new OpenApiSchema { Type = "string" } },
                                         { "collation", new OpenApiSchema { Type = "string" } },
                                         { "gCStrategy", new OpenApiSchema { Type = "string" } },
@@ -52,16 +30,16 @@ namespace MSSqlOperator.Kanyon {
                                                 }
                                             }
                                         }},
-                                        { "databaseServerSelector", new OpenApiSchema 
-                                            { 
+                                        { "databaseServerSelector", new OpenApiSchema
+                                            {
                                                 Type = "object",
                                                 Properties = new Dictionary<string, OpenApiSchema> {
                                                     { "matchLabels", new OpenApiSchema { Type = "object", AdditionalProperties = new OpenApiSchema { Type = "string" } } },
                                                     { "matchExpressions", new OpenApiSchema { Type = "object", AdditionalProperties = new OpenApiSchema { Type = "string" } } }
                                                 }
-                                            } 
+                                            }
                                         },
-                                        { "logFiles", new OpenApiSchema 
+                                        { "logFiles", new OpenApiSchema
                                             {
                                                 Type = "object",
                                                 Items = new OpenApiSchema {
@@ -72,9 +50,9 @@ namespace MSSqlOperator.Kanyon {
                                                         { "isPrimaryFile", new OpenApiSchema { Type = "boolean" }},
                                                     }
                                                 }
-                                            } 
+                                            }
                                         },
-                                        { "backupFiles", new OpenApiSchema 
+                                        { "backupFiles", new OpenApiSchema
                                             {
                                                 Type = "object",
                                                 Items = new OpenApiSchema {
@@ -85,8 +63,49 @@ namespace MSSqlOperator.Kanyon {
                                                         { "isPrimaryFile", new OpenApiSchema { Type = "boolean" }},
                                                     }
                                                 }
-                                            } 
-                                        },                                        
+                                            }
+                                        },
+                                    }
+            };
+            Add(new CustomResourceDefinition
+            {
+                metadata = new ObjectMeta
+                {
+                    name = "databases.mssql-operator.github.io"
+                },
+                spec = new CustomResourceDefinitionSpec
+                {
+                    group = "mssql-operator.github.io",
+                    names = new CustomResourceDefinitionNames
+                    {
+                        kind = "Database",
+                        plural = "databases",
+                        shortNames = new[] { "db" },
+                        singular = "database"
+                    },
+                    scope = "Namespaced",
+                    versions = new [] {
+                        new CustomResourceDefinitionVersion {
+                            name = "v1alpha1",
+                            served = true,
+                            storage = true,
+                            subresources = new CustomResourceSubresources {
+                                status = new CustomResourceSubresourceStatus { }
+                            },
+                            schema = new CustomResourceValidation {
+                                openAPIV3Schema = new OpenApiSchema {
+                                    Type = "object",
+                                    Properties = new Dictionary<string, OpenApiSchema> {
+                                        { "spec", databaseSpec },
+                                        { "status", new OpenApiSchema {
+                                            Type = "object",
+                                            Properties = new Dictionary<string, OpenApiSchema> {
+                                                { "observedGeneration", new OpenApiSchema { Type = "number" } },
+                                                { "LastUpdate", new OpenApiSchema { Type = "string", Format = "date-time" } },
+                                                { "Reason", new OpenApiSchema { Type = "string" } },
+                                                { "Message", new OpenApiSchema { Type = "string" } }
+                                            }
+                                        }}
                                     }
                                 }
                             }
@@ -95,14 +114,48 @@ namespace MSSqlOperator.Kanyon {
                 }
             });
 
-            Add(new CustomResourceDefinition {
-                metadata = new ObjectMeta {
+            var databaseServerSpec = new Microsoft.OpenApi.Models.OpenApiSchema
+            {
+                Type = "object",
+                Properties = new Dictionary<string, OpenApiSchema> {
+                                        { "adminUserName", new OpenApiSchema { Type = "string" }},
+                                        { "serviceUrl", new OpenApiSchema { Type = "string" }},
+                                        { "serviceSelector", new OpenApiSchema
+                                            {
+                                                Type = "object",
+                                                Properties = new Dictionary<string, OpenApiSchema> {
+                                                    { "matchLabels", new OpenApiSchema { Type = "object", AdditionalProperties = new OpenApiSchema { Type = "string" } } },
+                                                    { "matchExpressions", new OpenApiSchema { Type = "object", AdditionalProperties = new OpenApiSchema { Type = "string" } } }
+                                                }
+                                            }
+                                        },
+                                        { "adminPasswordSecret", new OpenApiSchema {
+                                            Type = "object",
+                                            Properties = new Dictionary<string, OpenApiSchema> {
+                                                { "value", new OpenApiSchema { Type = "string" }},
+                                                { "secretKeyRef", new OpenApiSchema {
+                                                    Type = "object",
+                                                    Properties = new Dictionary<string, OpenApiSchema> {
+                                                        { "key", new OpenApiSchema { Type = "string" }},
+                                                        { "name", new OpenApiSchema { Type = "string" }},
+                                                        { "optional", new OpenApiSchema { Type = "boolean" }},
+                                                    }
+                                                }}
+                                            }
+                                        }}
+                                    }
+            };
+            Add(new CustomResourceDefinition
+            {
+                metadata = new ObjectMeta
+                {
                     name = "databaseservers.mssql-operator.github.io"
                 },
                 spec = new CustomResourceDefinitionSpec
                 {
                     group = "mssql-operator.github.io",
-                    names = new CustomResourceDefinitionNames {
+                    names = new CustomResourceDefinitionNames
+                    {
                         kind = "DatabaseServer",
                         plural = "databaseservers",
                         shortNames = new[] { "dbms" },
@@ -118,34 +171,16 @@ namespace MSSqlOperator.Kanyon {
                                 status = new CustomResourceSubresourceStatus { }
                             },
                             schema = new CustomResourceValidation {
-                                openAPIV3Schema = new Microsoft.OpenApi.Models.OpenApiSchema {
+                                openAPIV3Schema = new OpenApiSchema {
                                     Type = "object",
                                     Properties = new Dictionary<string, OpenApiSchema> {
-                                        { "adminUserName", new OpenApiSchema { Type = "string" }},  
-                                        { "serviceUrl", new OpenApiSchema { Type = "string" }}, 
-                                        { "serviceSelector", new OpenApiSchema 
-                                            { 
-                                                Type = "object",
-                                                Properties = new Dictionary<string, OpenApiSchema> {
-                                                    { "matchLabels", new OpenApiSchema { Type = "object", AdditionalProperties = new OpenApiSchema { Type = "string" } } },
-                                                    { "matchExpressions", new OpenApiSchema { Type = "object", AdditionalProperties = new OpenApiSchema { Type = "string" } } }
-                                                }
-                                            } 
-                                        },
-                                        { "adminPasswordSecret", new OpenApiSchema {
+                                        { "spec", databaseServerSpec },
+                                        { "status", new OpenApiSchema {
                                             Type = "object",
                                             Properties = new Dictionary<string, OpenApiSchema> {
-                                                { "value", new OpenApiSchema { Type = "string" }},
-                                                { "secretKeyRef", new OpenApiSchema {
-                                                    Type = "object",
-                                                    Properties = new Dictionary<string, OpenApiSchema> {
-                                                        { "key", new OpenApiSchema { Type = "string" }},
-                                                        { "name", new OpenApiSchema { Type = "string" }},
-                                                        { "optional", new OpenApiSchema { Type = "boolean" }},
-                                                    }
-                                                }}
+                                                { "observedGeneration", new OpenApiSchema { Type = "number" } }
                                             }
-                                        }}                           
+                                        }}
                                     }
                                 }
                             }
@@ -154,14 +189,33 @@ namespace MSSqlOperator.Kanyon {
                 }
             });
 
-            Add(new CustomResourceDefinition {
-                metadata = new ObjectMeta {
+            var deploymentScriptSpec = new Microsoft.OpenApi.Models.OpenApiSchema
+            {
+                Type = "object",
+                Properties = new Dictionary<string, OpenApiSchema> {
+                                        { "script", new OpenApiSchema { Type = "string" }},
+                                        { "databaseSelector", new OpenApiSchema
+                                            {
+                                                Type = "object",
+                                                Properties = new Dictionary<string, OpenApiSchema> {
+                                                    { "matchLabels", new OpenApiSchema { Type = "object", AdditionalProperties = new OpenApiSchema { Type = "string" } } },
+                                                    { "matchExpressions", new OpenApiSchema { Type = "object", AdditionalProperties = new OpenApiSchema { Type = "string" } } }
+                                                }
+                                            }
+                                        }
+                                    }
+            };
+            Add(new CustomResourceDefinition
+            {
+                metadata = new ObjectMeta
+                {
                     name = "deploymentscripts.mssql-operator.github.io"
                 },
                 spec = new CustomResourceDefinitionSpec
                 {
                     group = "mssql-operator.github.io",
-                    names = new CustomResourceDefinitionNames {
+                    names = new CustomResourceDefinitionNames
+                    {
                         kind = "DeploymentScript",
                         plural = "deploymentscripts",
                         shortNames = new[] { "script" },
@@ -177,19 +231,20 @@ namespace MSSqlOperator.Kanyon {
                                 status = new CustomResourceSubresourceStatus { }
                             },
                             schema = new CustomResourceValidation {
-                                openAPIV3Schema = new Microsoft.OpenApi.Models.OpenApiSchema {
+                                openAPIV3Schema = new OpenApiSchema {
                                     Type = "object",
                                     Properties = new Dictionary<string, OpenApiSchema> {
-                                        { "script", new OpenApiSchema { Type = "string" }},  
-                                        { "databaseSelector", new OpenApiSchema 
-                                            { 
-                                                Type = "object",
-                                                Properties = new Dictionary<string, OpenApiSchema> {
-                                                    { "matchLabels", new OpenApiSchema { Type = "object", AdditionalProperties = new OpenApiSchema { Type = "string" } } },
-                                                    { "matchExpressions", new OpenApiSchema { Type = "object", AdditionalProperties = new OpenApiSchema { Type = "string" } } }
-                                                }
-                                            } 
-                                        }                        
+                                        { "spec", deploymentScriptSpec },
+                                        { "status", new OpenApiSchema {
+                                            Type = "object",
+                                            Properties = new Dictionary<string, OpenApiSchema> {
+                                                { "observedGeneration", new OpenApiSchema { Type = "number" } },
+                                                { "LastUpdate", new OpenApiSchema { Type = "string", Format = "date-time" } },
+                                                { "Reason", new OpenApiSchema { Type = "string" } },
+                                                { "Message", new OpenApiSchema { Type = "string" } },
+                                                { "ExecutedDate", new OpenApiSchema { Type = "string", Format = "date-time" } },
+                                            }
+                                        }}
                                     }
                                 }
                             }
